@@ -1,26 +1,27 @@
 let modInfo = {
-	name: "The ??? Tree",
+	name: "The Magic Tree",
 	id: "mymod",
 	author: "nobody",
-	pointsName: "points",
+	pointsName: "MP",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.0.1",
+	name: "Magic A",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.0.1</h3><br>
+	- Add Magic.<br>
+		- Added 3 Magic clickable.<br>
+		- Endgame: 160 MP.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -42,7 +43,9 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(3)
+	gain = gain.add(player.M.Boost)
+	
 	return gain
 }
 
@@ -50,13 +53,16 @@ function getPointGen() {
 function addedPlayerData() { return {
 }}
 
-// Display extra things at the top of the page
+
 var displayThings = [
+	function(){
+	return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because the god of Magic."
+	}
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("160"))
 }
 
 
