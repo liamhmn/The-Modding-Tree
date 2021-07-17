@@ -1,7 +1,7 @@
 let modInfo = {
 	name: "The Magic Tree",
-	id: "mymod",
-	author: "nobody",
+	id: "magic",
+	author: "3^AB=7",
 	pointsName: "MP",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -13,15 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
-	name: "Magic A",
+	num: "0.0.2",
+	name: "Magic B",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0.1</h3><br>
-	- Add Magic.<br>
-		- Added 3 Magic clickable.<br>
-		- Endgame: 160 MP.`
+<h3>v0.0.2</h3><br>
+- Added 1 M clickable.<br>
+- Added 3 M upgrades.<br>
+- Endgame: 1500 MP and 52 knowledge.<br>
+<h3>v0.0.1</h3><br>
+- Add Magic.<br>
+- Added 3 Magic clickable.<br>
+- Endgame: 160 MP.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -45,7 +49,8 @@ function getPointGen() {
 
 	let gain = new Decimal(3)
 	gain = gain.add(player.M.Boost)
-	
+	if(hasUpgrade('M',13))gain = gain.times(1.5)
+	if(hasUpgrade('M',14)) gain= gain.times(player.M.knowledge.pow(0.2).add(1))
 	return gain
 }
 
@@ -56,13 +61,14 @@ function addedPlayerData() { return {
 
 var displayThings = [
 	function(){
-	return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because the god of Magic."
+		if(player.M.cap.add(player.M.realeffect3).gte(1500)) return "MP hardcap is 1500 because of the god of Magic."
+	else return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because of the god of Magic."
 	}
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("160"))
+	return player.points.gte(new Decimal("1500"))&&player.M.knowledge.gte(52)
 }
 
 
