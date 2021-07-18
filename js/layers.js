@@ -10,6 +10,7 @@ addLayer("M", {
         cost1: new Decimal(20),
         cost2: new Decimal(50),
         cost3: new Decimal(100),
+     
         effect1: new Decimal(20),
         effect2: new Decimal(2),
         effect3: new Decimal(0),
@@ -18,6 +19,8 @@ addLayer("M", {
         level3: new Decimal(0),
         realeffect3: new Decimal(0),
         knowledge: new Decimal(0),
+        time1: new Decimal(0),
+        time2: new Decimal(0),
     }},
     color: "#c000c0",
     requires: new Decimal("eeeeeeeee10"), // Can be a function that takes requirement increases into account
@@ -58,17 +61,39 @@ addLayer("M", {
                     canClick(){return player.points.gte(format(player.M.cost3))},
                     onClick(){player.points = player.points.minus(format(player.M.cost3))
                  player.M.level3 =  player.M.level3.add(1)
-                        player.M.cost3 = player.M.cost3.add(12).times(1.6)},
+                 if(player.M.level3.gte(7)) player.M.cost3 = player.M.cost3.add(25).times(2)
+                     else   player.M.cost3 = player.M.cost3.add(12).times(1.6)},
                         unlocked(){return player.M.cap.gte(100)}
                     },
                     21:{
                         display() {return "knowledge +1. cost: 150 MP"},
-                        canClick(){return player.points.gte(150)&&player.points.div(30).add(1).gte(player.M.knowledge)},
+                        canClick(){return player.points.gte(150)&&(player.points.div(30).add(1).gte(player.M.knowledge)||player.M.time1.gte(1))},
                         onClick(){player.points = player.points.minus(150)
                      player.M.knowledge =  player.M.knowledge.add(1)
                             },
                             unlocked(){return (hasUpgrade('M',11))}
                         },
+                        41:{
+                            display() {return "Remove the hardcap of knowledge but only active 10 second. cost: 1200 MP. Time left: "+format(player.M.time1)+" seconds."},
+                            canClick(){return player.points.gte(1200)},
+                            onClick(){
+                                player.points = player.points.minus(1200)
+                                player.M.time1 = new Decimal(10)
+                         
+                                },
+                                unlocked(){return (hasUpgrade('M',21))}
+                            },
+                            42:{
+                                display() {return "Remove MP cap but only active 10 second. cost: MP hardcap. Time left: "+format(player.M.time1)+" seconds."},
+                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))},
+                                onClick(){
+                                    player.points = player.points.minus(formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))
+                                    player.M.time2 = new Decimal(10)
+                           
+                      
+                                    },
+                                    unlocked(){return (hasUpgrade('M',23))}
+                                },
     },
     upgrades: {
         11: {
@@ -103,22 +128,81 @@ addLayer("M", {
             currencyDisplayName: "knowledge",
             currencyInternalName:"knowledge",
             currencyLayer:"M",
-            unlocked(){return hasUpgrade('M',12)}
+            unlocked(){return hasUpgrade('M',13)}
+        },
+        21: {
+            title:"The knowledge of the People.",
+            description: "Unlock a magic",
+            cost: new Decimal(50),
+            currencyDisplayName: "knowledge",
+            currencyInternalName:"knowledge",
+            currencyLayer:"M",
+            unlocked(){return hasUpgrade('M',14)}
+        },
+        22: {
+            title:"The knowledge of the animal.",
+            description: "Remove the hardcap of boost hardcap and knowledge boost MP cap. Buy upgrade will not reset your knowledge.",
+            cost: new Decimal(100),
+            currencyDisplayName: "knowledge",
+            currencyInternalName:"knowledge",
+            currencyLayer:"M",
+        
+            unlocked(){return hasUpgrade('M',21)}
+        },
+        23: {
+            title:"The knowledge of the Organ system.",
+            description: "Unlock a magic.",
+            cost: new Decimal(3000),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',22)}
+        },
+        24: {
+            title:"The knowledge of the Organ.",
+            description: "Boost the first upgrade based on MP.",
+            cost: new Decimal(3470),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',23)}
+        },
+        31: {
+            title:"The knowledge of the Tissue.",
+            description: "knowledge boost MP cap again.",
+            cost: new Decimal(4000),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',24)}
         },
     },
     update(diff){
-    if(player.M.cap.add(player.M.realeffect3).gte(1500)&&player.points.gte(1500))    player.points = new  Decimal(1500)
-if (player.points.gte(player.M.cap.add(player.M.realeffect3))) player.points = player.M.cap.add(player.M.realeffect3)
+        if(hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
+      else  if(hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))&&!player.M.time2.gte(0.00001))   player.points = new  Decimal(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))
+  else  if(!hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.M.cap.add(player.M.realeffect3).gte(1500)&&player.points.gte(1500)&&!player.M.time2.gte(0.00001))    player.points = new  Decimal(1500)
+else if (!hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3)
 if(hasUpgrade('M',14)) player.M.effect3 = (player.points.add(1).log(10)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)))
 else  if(hasUpgrade('M',13)) player.M.effect3 = (player.points.add(1).log(10)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8))
 else player.M.effect3 = (player.points.add(1).log(10)).pow(3)
 player.M.realeffect3 = player.M.effect3.times(player.M.level3)
-if(hasUpgrade('M',12)) player.M.effect1 = new Decimal(30)
+if(hasUpgrade('M',24)) player.M.effect1 = new Decimal(player.points.add(1).pow(0.5).add(1))
+else if(hasUpgrade('M',12)) player.M.effect1 = new Decimal(30)
 else  player.M.effect1 = new Decimal(20)
 if(hasUpgrade('M',12)) player.M.effect2 = new Decimal(5)
 else  player.M.effect2 = new Decimal(2)
 player.M.cap = player.M.level1.times(player.M.effect1).add(30)
 player.M.Boost= player.M.level2.times(player.M.effect2)
+if(player.M.time1.gte(0.00001)) player.M.time1= player.M.time1.minus(new Decimal(1).times(diff))
+if(!player.M.time1.gte(0))player.M.time1=  new Decimal(0)
+if(player.M.time2.gte(0.00001)) player.M.time2= player.M.time2.minus(new Decimal(1).times(diff))
+
+
+
+
 
 
 

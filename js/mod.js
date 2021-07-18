@@ -13,14 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.2",
-	name: "Magic B",
+	num: "0.0.3",
+	name: "Magic C",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.0.3</h3><br>
+- Added 2 M clickable.<br>
+- Added 5 M upgrades.<br>
+- Endgame: 6969 MP.<br>
 <h3>v0.0.2</h3><br>
 - Added 1 M clickable.<br>
-- Added 3 M upgrades.<br>
+- Added 4 M upgrades.<br>
 - Endgame: 1500 MP and 52 knowledge.<br>
 <h3>v0.0.1</h3><br>
 - Add Magic.<br>
@@ -60,15 +64,17 @@ function addedPlayerData() { return {
 
 
 var displayThings = [
-	function(){
-		if(player.M.cap.add(player.M.realeffect3).gte(1500)) return "MP hardcap is 1500 because of the god of Magic."
+	function() {
+	if(hasUpgrade('M',31))return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
+    else if(hasUpgrade('M',22)) return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))+" because of the god of Magic."
+	else if(!hasUpgrade('M',22)&&player.M.cap.add(player.M.realeffect3).gte(1500)) return "MP hardcap is 1500 because of the god of Magic."
 	else return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because of the god of Magic."
 	}
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1500"))&&player.M.knowledge.gte(52)
+	return player.points.gte(new Decimal("6969"))
 }
 
 
