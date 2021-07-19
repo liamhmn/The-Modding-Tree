@@ -21,10 +21,12 @@ addLayer("M", {
         knowledge: new Decimal(0),
         time1: new Decimal(0),
         time2: new Decimal(0),
+        getknow: new Decimal(0),
     }},
     color: "#c000c0",
-    requires: new Decimal("eeeeeeeee10"), // Can be a function that takes requirement increases into account
-    resource: "Magic", // Name of prestige currency
+    requires: new Decimal("51000"), // Can be a function that takes requirement increases into account
+    resource: "Magic power", // Name of prestige currency
+    tooltip(){return "Magic"},
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
@@ -84,8 +86,8 @@ addLayer("M", {
                                 unlocked(){return (hasUpgrade('M',21))}
                             },
                             42:{
-                                display() {return "Remove MP cap but only active 10 second. cost: MP hardcap. Time left: "+format(player.M.time1)+" seconds."},
-                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))},
+                                display() {return "Remove MP cap but only active 10 second. cost: MP hardcap. Time left: "+format(player.M.time2)+" seconds."},
+                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time1.gte(0.00001)},
                                 onClick(){
                                     player.points = player.points.minus(formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))
                                     player.M.time2 = new Decimal(10)
@@ -94,6 +96,25 @@ addLayer("M", {
                                     },
                                     unlocked(){return (hasUpgrade('M',23))}
                                 },
+                                191:{
+                                    display() {return "Get 1 knowledge per second but gain less MP (Didn't affect by first hardcap"},
+                                    canClick(){return !player.M.getknow.gte(10)},
+                                    onClick(){
+                                      player.M.getknow = player.M.getknow.add(1)
+                               
+                          
+                                        },
+                                        unlocked(){return (hasUpgrade('M',33))}
+                                    },
+                                    192:{
+                                        display() {return "Lose 1 knowledge per second but gain more MP"},
+                                        canClick(){return player.M.getknow.gte(1)},
+                                        onClick(){
+                                            player.M.getknow = player.M.getknow.minus(1)
+                              
+                                            },
+                                            unlocked(){return (hasUpgrade('M',33))}
+                                        },
     },
     upgrades: {
         11: {
@@ -179,6 +200,56 @@ addLayer("M", {
     
             unlocked(){return hasUpgrade('M',24)}
         },
+        32: {
+            title:"The knowledge of the cell",
+            description: "MP boost the second magic.",
+            cost: new Decimal(6969),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',31)}
+        },
+        33: {
+            title:"The knowledge of the orgenelle",
+            description: "Unlock 2 magic.",
+            cost: new Decimal(11111),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',32)}
+        },
+        34: {
+            title:"The knowledge of the protein",
+            description: "MP gain x2.",
+            cost: new Decimal(22500),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',33)}
+        },
+        41: {
+            title:"The knowledge of the Molecule",
+            description: "MP hardcap boost MP gain.",
+            cost: new Decimal(36000),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',34)}
+        },
+        42: {
+            title:"The knowledge of the atom",
+            description: "Unlock a prestige layer.",
+            cost: new Decimal(51000),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    
+            unlocked(){return hasUpgrade('M',41)}
+        },
     },
     update(diff){
         if(hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
@@ -192,35 +263,68 @@ player.M.realeffect3 = player.M.effect3.times(player.M.level3)
 if(hasUpgrade('M',24)) player.M.effect1 = new Decimal(player.points.add(1).pow(0.5).add(1))
 else if(hasUpgrade('M',12)) player.M.effect1 = new Decimal(30)
 else  player.M.effect1 = new Decimal(20)
-if(hasUpgrade('M',12)) player.M.effect2 = new Decimal(5)
+if(hasUpgrade('M',32)) player.M.effect2 = new Decimal(5).add(player.points.add(10).log(10).add(1))
+else if(hasUpgrade('M',12)) player.M.effect2 = new Decimal(5)
 else  player.M.effect2 = new Decimal(2)
 player.M.cap = player.M.level1.times(player.M.effect1).add(30)
 player.M.Boost= player.M.level2.times(player.M.effect2)
 if(player.M.time1.gte(0.00001)) player.M.time1= player.M.time1.minus(new Decimal(1).times(diff))
 if(!player.M.time1.gte(0))player.M.time1=  new Decimal(0)
 if(player.M.time2.gte(0.00001)) player.M.time2= player.M.time2.minus(new Decimal(1).times(diff))
+if(!player.M.time2.gte(0))player.M.time2=  new Decimal(0)
+player.M.knowledge =player.M.knowledge.add(player.M.getknow.times(diff)) 
 
-
-
-
+if(player.M.knowledge < 0) player.M.getknow = new Decimal(0)
+if(player.M.knowledge < 0) player.M.knowledge = new Decimal(0)
+if(!player.points.gte(0.000001)) player.M.getknow = new Decimal(0)
+if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
 
 
 
     },
+    doReset(resettingLayer) {
+        let keep = [];
     
+        if (resettingLayer=="M")    cap= new Decimal(30)
+        if (resettingLayer=="M")  Boost= new Decimal(0)
+        if (resettingLayer=="M") cost1= new Decimal(20)
+        if (resettingLayer=="M")  cost2= new Decimal(50)
+        if (resettingLayer=="M")  cost3= new Decimal(100)
+     
+        if (resettingLayer=="M")  effect1= new Decimal(20)
+        if (resettingLayer=="M")  effect2= new Decimal(2)
+        if (resettingLayer=="M") effect3= new Decimal(0)
+        if (resettingLayer=="M") level1= new Decimal(0)
+        if (resettingLayer=="M")  level2= new Decimal(0)
+        if (resettingLayer=="M") level3= new Decimal(0)
+        if (resettingLayer=="M")   realeffect3= new Decimal(0)
+        if (resettingLayer=="M")  knowledge= new Decimal(0)
+        if (resettingLayer=="M")  time1= new Decimal(0)
+        if (resettingLayer=="M")  time2= new Decimal(0)
+        if (resettingLayer=="M") getknow= new Decimal(0)
+     
+        if (resettingLayer=="M") layerDataReset(this.layer, keep)
+        player.M.points=new Decimal (1)
+    },
     layerShown(){return true},
     tabFormat: {
         "Tier 1 magic": {
                 content: [
                         
           
-          "clickables",
-         
+                    ["row",[ ["clickable",11], ["clickable",12], ["clickable",13]]],
+                    ["row",[ ["clickable",21], ["clickable",22], ["clickable",23]]],
+                    ["row",[ ["clickable",31], ["clickable",32], ["clickable",33]]],
           ["display-text",function(){
             let s=""
            if(hasUpgrade('M',11)) s+="Your have "+format(player.M.knowledge)+" knowledge.<br>"
-           if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
           
+           if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
+           if(player.M.knowledge.gte(625)) s+="knowledge second hardcap is 1250.<br>"
+           if(hasUpgrade('M',33)) s+="You are gaining "+ formatWhole(player.M.getknow)+" knowledge per second.<br>"
+
+           if(hasUpgrade('M',33)&&player.M.getknow.gte(0)) s+="You are gaining "+ formatWhole(player.M.getknow.times(200))+" less MP per second.<br>"
+           else s+="You are gaining "+ formatWhole(new Decimal(0).minus(player.M.getknow.times(50)))+" more MP per second.<br>"
           
             return s}],],
         
@@ -228,6 +332,52 @@ if(player.M.time2.gte(0.00001)) player.M.time2= player.M.time2.minus(new Decimal
                         return true
                 },
         },
+        "Tier 2 magic": {
+            content: [
+                    
+      
+                ["row",[ ["clickable",41], ["clickable",42], ["clickable",43]]],
+                ["row",[ ["clickable",51], ["clickable",52], ["clickable",53]]],
+                ["row",[ ["clickable",61], ["clickable",62], ["clickable",63]]],
+      ["display-text",function(){
+        let s=""
+       if(hasUpgrade('M',11)) s+="Your have "+format(player.M.knowledge)+" knowledge.<br>"
+       if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
+       if(player.M.knowledge.gte(625)) s+="knowledge second hardcap is 1250.<br>"
+       if(hasUpgrade('M',33)) s+="You are gaining "+ formatWhole(player.M.getknow)+" knowledge per second.<br>"
+
+       if(hasUpgrade('M',33)&&player.M.getknow.gte(1)) s+="You are gaining "+ formatWhole(player.M.getknow.times(200))+" less MP per second.<br>"
+       else s+="You are gaining "+ formatWhole(new Decimal(0).minus(player.M.getknow.times(50)))+" more MP per second.<br>"
+      
+        return s}],],
+    
+            unlocked(){
+                    return hasUpgrade('M',21)||player.M.points.gte(1)
+            },
+    },
+    "knowledge ": {
+        content: [
+                
+  
+            ["row",[ ["clickable",191], ["clickable",192], ["clickable",193]]],
+            ["row",[ ["clickable",201], ["clickable",202], ["clickable",203]]],
+            ["row",[ ["clickable",211], ["clickable",212], ["clickable",213]]],
+  ["display-text",function(){
+    let s=""
+   if(hasUpgrade('M',11)) s+="Your have "+format(player.M.knowledge)+" knowledge.<br>"
+   if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
+   if(player.M.knowledge.gte(625)) s+="knowledge second hardcap is 1250.<br>"
+   if(hasUpgrade('M',33)) s+="You are gaining "+ formatWhole(player.M.getknow)+" knowledge per second.<br>"
+
+   if(hasUpgrade('M',33)&&player.M.getknow.gte(1)) s+="You are gaining "+ formatWhole(player.M.getknow.times(200))+" less MP per second.<br>"
+   else s+="You are gaining "+ formatWhole(new Decimal(0).minus(player.M.getknow.times(50)))+" more MP per second.<br>"
+  
+    return s}],],
+
+        unlocked(){
+                return hasUpgrade('M',33)||player.M.points.gte(1)
+        },
+},
         "Upgrades": {
             content: [
                     
@@ -240,5 +390,16 @@ if(player.M.time2.gte(0.00001)) player.M.time2= player.M.time2.minus(new Decimal
                     return true
             },
     },
+    "Prestige": {
+        content: [
+        "main-display",
+        "prestige-button",
+        "blank"],
+ 
+        unlocked(){
+            return hasUpgrade('M',42)||player.M.points.gte(1)
+    },
+     
+},
     },
 })

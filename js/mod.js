@@ -8,16 +8,20 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 0,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.3",
-	name: "Magic C",
+	num: "0.0.4",
+	name: "Magic D",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.0.4</h3><br>
+- Added 2 M clickable.<br>
+- Added 5 M upgrades.<br>
+- Endgame: 1 Magic Power.<br>
 <h3>v0.0.3</h3><br>
 - Added 2 M clickable.<br>
 - Added 5 M upgrades.<br>
@@ -55,6 +59,10 @@ function getPointGen() {
 	gain = gain.add(player.M.Boost)
 	if(hasUpgrade('M',13))gain = gain.times(1.5)
 	if(hasUpgrade('M',14)) gain= gain.times(player.M.knowledge.pow(0.2).add(1))
+	if(player.M.getknow.gte(1)) gain = gain.minus(player.M.getknow.times(200)) 
+	else  if(!player.M.getknow.gte(0)) gain = gain.minus(player.M.getknow.times(50)) 
+	if(hasUpgrade('M',34))gain = gain.times(2)
+	if(hasUpgrade('M',41))gain=gain.times(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).add(10).log(7).add(10).log(7))
 	return gain
 }
 
@@ -74,7 +82,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("6969"))
+	return player.M.points.gte(1)
 }
 
 
