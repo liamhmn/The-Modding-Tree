@@ -59,10 +59,13 @@ function getPointGen() {
 	gain = gain.add(player.M.Boost)
 	if(hasUpgrade('M',13))gain = gain.times(1.5)
 	if(hasUpgrade('M',14)) gain= gain.times(player.M.knowledge.pow(0.2).add(1))
-	if(player.M.getknow.gte(1)) gain = gain.minus(player.M.getknow.times(200)) 
+	if(player.M.getknow.gte(1)&&hasMilestone('M',1)) gain = gain.minus(player.M.getknow.times(200).div(10))
+	else if(player.M.getknow.gte(1)) gain = gain.minus(player.M.getknow.times(200))
+	else  if(!player.M.getknow.gte(0)&&hasMilestone('M',1)) gain = gain.minus(player.M.getknow.times(50).div(10)) 
 	else  if(!player.M.getknow.gte(0)) gain = gain.minus(player.M.getknow.times(50)) 
 	if(hasUpgrade('M',34))gain = gain.times(2)
 	if(hasUpgrade('M',41))gain=gain.times(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).add(10).log(7).add(10).log(7))
+	if(hasMilestone('M',1))gain = gain.times(10)
 	return gain
 }
 
@@ -73,10 +76,12 @@ function addedPlayerData() { return {
 
 var displayThings = [
 	function() {
-	if(hasUpgrade('M',31))return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
-    else if(hasUpgrade('M',22)) return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))+" because of the god of Magic."
-	else if(!hasUpgrade('M',22)&&player.M.cap.add(player.M.realeffect3).gte(1500)) return "MP hardcap is 1500 because of the god of Magic."
+		if(inChallenge('M',11))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic.<br>Your Magic timer time left is  " +  format(player.M.C1time)+" seconds."
+	if(hasUpgrade('M',31)) return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
+    else if(hasUpgrade('M',22))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))+" because of the god of Magic."
+	else if(!hasUpgrade('M',22)&&player.M.cap.add(player.M.realeffect3).gte(1500)) return"MP hardcap is 1500 because of the god of Magic."
 	else return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because of the god of Magic."
+	
 	}
 ]
 
@@ -102,4 +107,5 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	
 }

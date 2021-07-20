@@ -22,6 +22,10 @@ addLayer("M", {
         time1: new Decimal(0),
         time2: new Decimal(0),
         getknow: new Decimal(0),
+        poin: new Decimal(0),
+        speed: new Decimal(1),
+        C1time: new Decimal(0),
+        Hasup43: new Decimal(0),
     }},
     color: "#c000c0",
     requires: new Decimal("51000"), // Can be a function that takes requirement increases into account
@@ -56,7 +60,8 @@ addLayer("M", {
                 onClick(){player.points = player.points.minus(format(player.M.cost2))
                    
                     player.M.level2=player.M.level2.add(1)
-                    player.M.cost2 = player.M.cost2.add(8).times(1.4)}
+                    if(hasMilestone('M',2)) player.M.cost2 = player.M.cost2.add(8).times(1.3)
+                    else player.M.cost2 = player.M.cost2.add(8).times(1.4)}
                 },
                 13:{
                     display() {return "MP cap + " +format(player.M.effect3) + " (based on MP). cost: " + format(player.M.cost3) + " MP"},
@@ -87,10 +92,11 @@ addLayer("M", {
                             },
                             42:{
                                 display() {return "Remove MP cap but only active 10 second. cost: MP hardcap. Time left: "+format(player.M.time2)+" seconds."},
-                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time1.gte(0.00001)},
+                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time2.gte(0.00001)},
                                 onClick(){
                                     player.points = player.points.minus(formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))
-                                    player.M.time2 = new Decimal(10)
+                                    if(hasMilestone('M',1))  player.M.time2 = new Decimal(1)
+                                     else   player.M.time2 = new Decimal(10)
                            
                       
                                     },
@@ -115,6 +121,26 @@ addLayer("M", {
                                             },
                                             unlocked(){return (hasUpgrade('M',33))}
                                         },
+                                    221:{
+                                            display() {return "Time speed /2"},
+                                            canClick(){return true},
+                                            onClick(){
+                                                player.M.speed =   player.M.speed.div(2)
+                                                player.devSpeed = player.M.speed
+                            
+                                                },
+                                                unlocked(){return (hasMilestone('M',1))}
+                                            },
+                                            222:{
+                                                display() {return "Time speed x2"},
+                                                canClick(){return !player.M.speed.gte(1)},
+                                                onClick(){
+                                                    player.M.speed =   player.M.speed.times(2)
+                                                    player.devSpeed = player.M.speed
+                                                  
+                                                    },
+                                                    unlocked(){return (hasMilestone('M',1))}
+                                                },
     },
     upgrades: {
         11: {
@@ -167,7 +193,10 @@ addLayer("M", {
             currencyDisplayName: "knowledge",
             currencyInternalName:"knowledge",
             currencyLayer:"M",
-        
+            onPurchase(){
+player.M.knowledge= player.M.knowledge.add(100)
+
+            },
             unlocked(){return hasUpgrade('M',21)}
         },
         23: {
@@ -250,6 +279,42 @@ addLayer("M", {
     
             unlocked(){return hasUpgrade('M',41)}
         },
+        43: {
+            title:"The knowledge of the subatomic particle",
+            description: "Unlock a Challenge. Keep this upgrade on Magic power reset.",
+            cost: new Decimal(64000),
+           
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+    onPurchase(){player.M.Hasup43=new Decimal(1)},
+            unlocked(){return hasUpgrade('M',42)|| hasUpgrade('M',43)}
+        },
+    },
+    milestones: {
+        1: {
+            requirementDescription: "1 Magic power",
+            effectDescription: "MP gain x10 but second Tier 2 magic only can active 1 second. Unlock 2 magic.",
+            done() { return player.M.points.gte(1) }
+        },
+        2: {
+            requirementDescription: "2 Magic power",
+            effectDescription: "The second magic is cheaper. ",
+            done() { return player.M.points.gte(2) }
+        },
+        
+    },
+    challenges: {
+        11: {
+            name: "Magic timer",
+            challengeDescription: "Nothing change.",
+            goalDescription: function(){return "Reach 51000 MP within 120 seconds."},
+            canComplete: function() {return player.points.gte(51000)},
+            onEnter(){
+            player.M.C1time =new Decimal(120)},
+            rewardDescription(){return "Unlock a magic"},
+            unlocked(){return( hasUpgrade('M',43))}
+        },
+       
     },
     update(diff){
         if(hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
@@ -278,13 +343,14 @@ if(player.M.knowledge < 0) player.M.getknow = new Decimal(0)
 if(player.M.knowledge < 0) player.M.knowledge = new Decimal(0)
 if(!player.points.gte(0.000001)) player.M.getknow = new Decimal(0)
 if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
-
-
+if(player.M.C1time.gte(0.000000001)) player.M.C1time= player.M.C1time.minus(new Decimal(1).times(diff))
+if(!player.M.C1time.gte(0.000000001)) player.M.activeChallenge=null
 
     },
     doReset(resettingLayer) {
         let keep = [];
-    
+        if (hasUpgrade("M", 43)) keep.push(43)
+        player.M.upgrades = filter(player.M.upgrades, keep)
         if (resettingLayer=="M")    cap= new Decimal(30)
         if (resettingLayer=="M")  Boost= new Decimal(0)
         if (resettingLayer=="M") cost1= new Decimal(20)
@@ -298,13 +364,18 @@ if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
         if (resettingLayer=="M")  level2= new Decimal(0)
         if (resettingLayer=="M") level3= new Decimal(0)
         if (resettingLayer=="M")   realeffect3= new Decimal(0)
-        if (resettingLayer=="M")  knowledge= new Decimal(0)
+      
         if (resettingLayer=="M")  time1= new Decimal(0)
         if (resettingLayer=="M")  time2= new Decimal(0)
         if (resettingLayer=="M") getknow= new Decimal(0)
-     
+        if (resettingLayer=="M") speed= new Decimal(1)
+        if (resettingLayer=="M") poin= tmp.M.resetGain
+        if (resettingLayer == "M") keep.push("points")
+        if (resettingLayer == "M") keep.push("C1time")
+       
+        if (resettingLayer=="M")  knowledge= new Decimal(0)
         if (resettingLayer=="M") layerDataReset(this.layer, keep)
-        player.M.points=new Decimal (1)
+       
     },
     layerShown(){return true},
     tabFormat: {
@@ -322,7 +393,6 @@ if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
            if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
            if(player.M.knowledge.gte(625)) s+="knowledge second hardcap is 1250.<br>"
            if(hasUpgrade('M',33)) s+="You are gaining "+ formatWhole(player.M.getknow)+" knowledge per second.<br>"
-
            if(hasUpgrade('M',33)&&player.M.getknow.gte(0)) s+="You are gaining "+ formatWhole(player.M.getknow.times(200))+" less MP per second.<br>"
            else s+="You are gaining "+ formatWhole(new Decimal(0).minus(player.M.getknow.times(50)))+" more MP per second.<br>"
           
@@ -378,6 +448,28 @@ if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
                 return hasUpgrade('M',33)||player.M.points.gte(1)
         },
 },
+"Time ": {
+    content: [
+            
+
+        ["row",[ ["clickable",221], ["clickable",222], ["clickable",223]]],
+      
+["display-text",function(){
+let s=""
+if(hasUpgrade('M',11)) s+="Your have "+format(player.M.knowledge)+" knowledge.<br>"
+if(hasUpgrade('M',11)) s+="knowledge hardcap is "+ formatWhole(player.points.div(30).add(2))+".<br>"
+if(player.M.knowledge.gte(625)) s+="knowledge second hardcap is 1250.<br>"
+if(hasUpgrade('M',33)) s+="You are gaining "+ formatWhole(player.M.getknow)+" knowledge per second.<br>"
+
+if(hasUpgrade('M',33)&&player.M.getknow.gte(1)) s+="You are gaining "+ formatWhole(player.M.getknow.times(200))+" less MP per second.<br>"
+else s+="You are gaining "+ formatWhole(new Decimal(0).minus(player.M.getknow.times(50)))+" more MP per second.<br>"
+
+return s}],],
+
+    unlocked(){
+            return hasMilestone('M',1)
+    },
+},
         "Upgrades": {
             content: [
                     
@@ -394,12 +486,25 @@ if(player.M.knowledge.gte(1250)) player.M.knowledge = new Decimal(1250)
         content: [
         "main-display",
         "prestige-button",
-        "blank"],
+        "blank",
+    "milestones"],
  
         unlocked(){
             return hasUpgrade('M',42)||player.M.points.gte(1)
     },
      
+},
+"Challenges": {
+    content: [
+            
+
+
+"challenges"],
+
+
+    unlocked(){
+            return hasUpgrade('M',43)
+    },
 },
     },
 })
