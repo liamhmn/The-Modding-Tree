@@ -287,7 +287,7 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyDisplayName: "MP",
             currencyInternalName:"points",
     onPurchase(){player.M.Hasup43=new Decimal(1)},
-            unlocked(){return hasUpgrade('M',42)|| hasUpgrade('M',43)}
+            unlocked(){return hasUpgrade('M',42)}
         },
     },
     milestones: {
@@ -303,19 +303,7 @@ player.M.knowledge= player.M.knowledge.add(100)
         },
         
     },
-    challenges: {
-        11: {
-            name: "Magic timer",
-            challengeDescription: "Nothing change.",
-            goalDescription: function(){return "Reach 51000 MP within 120 seconds."},
-            canComplete: function() {return player.points.gte(51000)},
-            onEnter(){
-            player.M.C1time =new Decimal(120)},
-            rewardDescription(){return "Unlock a magic"},
-            unlocked(){return( hasUpgrade('M',43))}
-        },
-       
-    },
+ 
     update(diff){
         if(hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
       else  if(hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))&&!player.M.time2.gte(0.00001))   player.points = new  Decimal(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))
@@ -349,8 +337,7 @@ if(!player.M.C1time.gte(0.000000001)) player.M.activeChallenge=null
     },
     doReset(resettingLayer) {
         let keep = [];
-        if (hasUpgrade("M", 43)) keep.push(43)
-        player.M.upgrades = filter(player.M.upgrades, keep)
+        
         if (resettingLayer=="M")    cap= new Decimal(30)
         if (resettingLayer=="M")  Boost= new Decimal(0)
         if (resettingLayer=="M") cost1= new Decimal(20)
@@ -494,17 +481,6 @@ return s}],],
     },
      
 },
-"Challenges": {
-    content: [
-            
 
-
-"challenges"],
-
-
-    unlocked(){
-            return hasUpgrade('M',43)
-    },
-},
     },
 })
