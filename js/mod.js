@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.4",
-	name: "Magic D",
+	num: "0.0.5",
+	name: "Magic E",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.0.5</h3><br>
+- Added 3 M clickable.<br>
+- Added 8 M upgrades.<br>
+- Added 2 M milestones.<br>
+- Endgame: 8500000 MP.<br>
 <h3>v0.0.4</h3><br>
 - Added 2 M clickable.<br>
 - Added 5 M upgrades.<br>
@@ -66,6 +71,9 @@ function getPointGen() {
 	if(hasUpgrade('M',34))gain = gain.times(2)
 	if(hasUpgrade('M',41))gain=gain.times(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).add(10).log(7).add(10).log(7))
 	if(hasMilestone('M',1))gain = gain.times(10)
+	if(hasUpgrade('M',61))gain = gain.times(5)
+	if(hasUpgrade('M',62))gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap).times(0.25))
+
 	return gain
 }
 
@@ -76,8 +84,8 @@ function addedPlayerData() { return {
 
 var displayThings = [
 	function() {
-		if(inChallenge('M',11))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic.<br>Your Magic timer time left is  " +  format(player.M.C1time)+" seconds."
-	if(hasUpgrade('M',31)) return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
+		if(hasUpgrade('M',43))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap))+" because of the god of Magic."
+	else if(hasUpgrade('M',31)) return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
     else if(hasUpgrade('M',22))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))+" because of the god of Magic."
 	else if(!hasUpgrade('M',22)&&player.M.cap.add(player.M.realeffect3).gte(1500)) return"MP hardcap is 1500 because of the god of Magic."
 	else return "MP hardcap is "+format(player.M.cap.add(player.M.realeffect3))+" because of the god of Magic."
@@ -87,7 +95,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.M.points.gte(1)
+	return player.points.gte(8500000)
 }
 
 
