@@ -91,7 +91,7 @@ addLayer("M", {
                     31:{
                         display() {if(hasUpgrade('M',54)) return "knowledge +100. cost: 15,000 MP"
                     else return "knowledge +1. cost: 150 MP"},
-                        canClick(){return ((!hasUpgrade('M',54)&&player.points.gte(150))||(hasUpgrade('M',54)&&player.points.gte(15000)))&&((player.points.div(30).add(1).gte(player.M.knowledge)&&player.M.knowledge.gte(2500))||player.M.time1.gte(1))&&(!player.M.knowledge.gte(1250)||player.M.time3.gte(0.000000001))&&!player.M.knowledge.gte(50000)},
+                        canClick(){return ((!hasUpgrade('M',54)&&player.points.gte(150))||(hasUpgrade('M',54)&&player.points.gte(15000)))&&((player.points.div(30).add(1).gte(player.M.knowledge)&&!player.M.knowledge.gte(2500))||player.M.time1.gte(1))&&(!player.M.knowledge.gte(1250)||player.M.time3.gte(0.000000001))&&!player.M.knowledge.gte(50000)},
                         onClick(){
                             
                             if(hasUpgrade('M',54))    player.points = player.points.minus(15000)
