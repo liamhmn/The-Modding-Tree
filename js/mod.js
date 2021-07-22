@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.5",
-	name: "Magic E",
+	num: "0.0.5.5",
+	name: "Magic E2",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -73,7 +73,7 @@ function getPointGen() {
 	if(hasMilestone('M',1))gain = gain.times(10)
 	if(hasUpgrade('M',61))gain = gain.times(5)
 	if(hasUpgrade('M',62))gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap).times(0.25))
-
+	if(hasChallenge('M',11))gain = gain.times(2)
 	return gain
 }
 
@@ -95,7 +95,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(8500000)
+	return player.points.gte(650000000)
 }
 
 
