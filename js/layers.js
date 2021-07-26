@@ -132,7 +132,7 @@ addLayer("M", {
                       
                         41:{
                             display() {return "Remove the first hardcap of knowledge but only active 10 second.<br> cost: 1,200 MP.<br> Time left: "+format(player.M.time1)+" seconds."},
-                            canClick(){return player.points.gte(1200)},
+                            canClick(){return player.points.gte(1200)&&!inChallenge('M',12)},
                             onClick(){
                                 player.points = player.points.minus(1200)
                                 player.M.time1 = new Decimal(10)
@@ -143,7 +143,7 @@ addLayer("M", {
                             },
                             42:{
                                 display() {return "Remove MP cap but only active 10 second.<br> cost: " + format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))+" MP.<br>Time left: "+format(player.M.time2)+" seconds."},
-                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time2.gte(0.00001)},
+                                canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time2.gte(0.00001)&&!inChallenge('M',12)},
                                 onClick(){
                                     player.points = player.points.minus(formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))
                                     if(hasMilestone('M',1))  player.M.time2 = new Decimal(1)
@@ -155,7 +155,7 @@ addLayer("M", {
                                 },
                                 43:{
                                     display() {return "Get knowledge Magic didn't affect by second hardcap but only active 10 second.<br> cost: 50,000 MP.<br> Time left: "+format(player.M.time3)+" seconds."},
-                                    canClick(){return player.points.gte(50000)},
+                                    canClick(){return player.points.gte(50000)&&!inChallenge('M',12)},
                                     onClick(){
                                         player.points = player.points.minus(50000)
                                         player.M.time3 = new Decimal(10)
