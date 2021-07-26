@@ -13,11 +13,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.6",
-	name: "Magic F",
+	num: "0.0.6.5",
+	name: "Magic F2",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.0.6.5</h3><br>
+- Added 5 M upgrades.<br>
+- Added 2 M challenge.<br>
+- Endgame: Complete No tier 2.<br>
 <h3>v0.0.6</h3><br>
 - Added 7 M upgrades.<br>
 - Added 2 M clickable.<br>
@@ -104,7 +108,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(2.6e10)
+	return hasChallenge('M',12)
 }
 
 

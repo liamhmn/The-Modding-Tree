@@ -758,8 +758,8 @@ else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
         12: {
             name: "No Tier 2",
             challengeDescription: "You can't use tier 2 magic",
-            goal: new Decimal(100000),
-            rewardDescription(){return "Second tier 2 magic can active 2 seconds."},
+            goal: new Decimal(2.5e10),
+            rewardDescription(){return "placeholder."},
           unlocked(){return hasUpgrade("M", 531)||inChallenge('M',12)||hasChallenge('M',12)},
         
         },
