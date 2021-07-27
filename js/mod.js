@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.6.5",
-	name: "Magic F2",
+	num: "0.0.7",
+	name: "God",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.0.7</h3><br>
+- Added a layer.<br>
+- Added 2 M upgrades.<br>
+- Added 1 M challenge.<br>
+- Endgame: 1 God Power.<br>
 <h3>v0.0.6.5</h3><br>
 - Added 5 M upgrades.<br>
 - Added 2 M challenge.<br>
@@ -30,7 +35,7 @@ let changelog = `<h1>Changelog:</h1><br>
 - Added 3 M clickable.<br>
 - Added 8 M upgrades.<br>
 - Added 2 M milestones.<br>
-- Added 1 M challenge
+- Added 1 M challenge.<br>
 - Endgame: 8500000 MP.<br>
 <h3>v0.0.4</h3><br>
 - Added 2 M clickable.<br>
@@ -81,10 +86,14 @@ function getPointGen() {
 	if(hasUpgrade('M',41))gain=gain.times(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).add(10).log(7).add(10).log(7))
 	if(hasMilestone('M',1))gain = gain.times(10)
 	if(hasUpgrade('M',61))gain = gain.times(5)
-	if(hasUpgrade('M',511)) gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).times(0.25))
+	
+	if(inChallenge('M',21))gain = gain.times(1.33333)
+	else if(hasChallenge('M',21)) gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).pow(1.2).times(0.25))
+	else if(hasUpgrade('M',511)) gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).times(0.25))
 	else if(hasUpgrade('M',72))gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(0.25))
 	else if(hasUpgrade('M',62))gain = gain.add(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap).times(0.25))
 	if(hasChallenge('M',11))gain = gain.times(2)
+	
 	return gain
 }
 
@@ -95,7 +104,10 @@ function addedPlayerData() { return {
 
 var displayThings = [
 	function() { 
-		if(hasUpgrade('M',511))	return"MP hardcap is " + format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11)) +" because of the god of Magic."
+		if(inChallenge('M',21)) return"MP hardcap is " + format(tmp.pointGen) +" because of the challenge."
+		else if(hasChallenge('M',21)) return"MP hardcap is " + format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).pow(1.2)) +" because of the god of Magic."
+		else if(hasUpgrade('M',511))	return"MP hardcap is " + format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11)) +" because of the god of Magic."
+
 		else if(hasUpgrade('M',72)) return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100))+" because of the god of Magic."
 		else if(hasUpgrade('M',43))  return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap))+" because of the god of Magic."
 	else if(hasUpgrade('M',31)) return"MP hardcap is "+format(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))+" because of the god of Magic."
@@ -108,7 +120,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasChallenge('M',12)
+	return player.G.points.gte(1)
 }
 
 

@@ -52,7 +52,9 @@ addLayer("M", {
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.1, // Prestige currency exponent
+    exponent() {
+     if(hasUpgrade('M',84))   return 0.5
+     else   return 0.1}, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -120,7 +122,7 @@ addLayer("M", {
                             display() {
                                if(inChallenge('M',11)) return "Power +1.<br> cost: 60000 MP"
                                else return "Power +1.<br> cost: 80000 MP"},
-                            canClick(){return ((player.points.gte(80000)||(player.points.gte(60000)&&inChallenge('M',11)))&&((!player.M.power.gte(20)||hasUpgrade('M',82))&&!player.M.power.gte(player.M.pcap))&&!inChallenge('M',22))},
+                            canClick(){return ((player.points.gte(80000)||(player.points.gte(60000)&&inChallenge('M',11)))&&((!player.M.power.gte(20)||hasUpgrade('M',82))&&!player.M.power.gte(formatWhole(player.M.pcap)))&&!inChallenge('M',22))},
                             onClick(){
                                 
                                 if(inChallenge('M',11))   player.points = player.points.minus(60000)
@@ -146,7 +148,8 @@ addLayer("M", {
                                 canClick(){return player.points.gte( formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))&&!player.M.time2.gte(0.00001)&&!inChallenge('M',12)},
                                 onClick(){
                                     player.points = player.points.minus(formatWhole(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge).minus(1)))
-                                    if(hasMilestone('M',1))  player.M.time2 = new Decimal(1)
+                                    if(hasChallenge('M',12))player.M.time2 = new Decimal(2)
+                                  else  if(hasMilestone('M',1))  player.M.time2 = new Decimal(1)
                                      else   player.M.time2 = new Decimal(10)
                            
                       
@@ -233,7 +236,8 @@ canClick(){return true},
 onClick(){
     player.M.s1=new Decimal(1)
     player.M.scost=new Decimal(0)
-    if(hasUpgrade('M',83))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83]
+    if(hasUpgrade('M',84))player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83,84]
+  else  if(hasUpgrade('M',83))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83]
    else if(hasUpgrade('M',82))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82]
 else if(hasUpgrade('M',81)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81]
 else if(hasUpgrade('M',74)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74]
@@ -522,6 +526,14 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyInternalName:"points",
             unlocked(){return hasUpgrade('M',82)}
         },
+        84: {
+            title:"The Power of the GOD",
+            description: "Magic Power is cheaper",
+            cost: new Decimal(6.2e10),
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+            unlocked(){return hasUpgrade('M',83)}
+        },
         511: {
           
             description: "First 3 Tier 1 magic level boost MP gain.",
@@ -575,6 +587,7 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyDisplayName: "Study point",
             currencyInternalName:"sphave",
             currencyLayer:"M",
+            branches: [541],
             unlocked(){return hasUpgrade('M',82)},
             onPurchase(){
                 player.M.scost=player.M.scost.add(6)
@@ -589,6 +602,7 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyDisplayName: "Study point",
             currencyInternalName:"sphave",
             currencyLayer:"M",
+            branches: [541],
             unlocked(){return hasUpgrade('M',82)},
             onPurchase(){
                 player.M.scost=player.M.scost.add(2)
@@ -608,6 +622,20 @@ player.M.knowledge= player.M.knowledge.add(100)
                 player.M.scost=player.M.scost.add(7)
             player.M.sphave=player.M.sp.minus(player.M.scost)},
             canAfford(){return  hasUpgrade('M',522)},
+            style: { margin: "20px" }
+        },
+        541: {
+          
+            description: "Unlock a layer.",
+            cost: new Decimal(3),
+            currencyDisplayName: "Study point",
+            currencyInternalName:"sphave",
+            currencyLayer:"M",
+            unlocked(){return hasChallenge('M',21)},
+            onPurchase(){
+                player.M.scost=player.M.scost.add(3)
+            player.M.sphave=player.M.sp.minus(player.M.scost)},
+            canAfford(){return  hasUpgrade('M',531)&&hasUpgrade('M',532)},
             style: { margin: "20px" }
         },
     },
@@ -657,13 +685,15 @@ player.M.knowledge= player.M.knowledge.add(100)
  
     update(diff){
         if(player.points.gte(player.M.best)) player.M.best=player.points
-        if(hasUpgrade('M',511)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11)
-       else if(hasUpgrade('M',72)&&!hasUpgrade('M',511)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100)
-       else if(hasUpgrade('M',43)&&!hasUpgrade('M',72)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap)
-       else if(hasUpgrade('M',31)&&!hasUpgrade('M',43)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
-      else  if(hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))&&!player.M.time2.gte(0.00001))   player.points = new  Decimal(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))
-  else  if(!hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.M.cap.add(player.M.realeffect3).gte(1500)&&player.points.gte(1500)&&!player.M.time2.gte(0.00001))    player.points = new  Decimal(1500)
-else if (!hasUpgrade('M',22)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3)
+        if(hasChallenge('M',21)&&!inChallenge('M',21)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).pow(1.2))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11).pow(1.2)
+       else if(hasUpgrade('M',511)&&!inChallenge('M',21)&&!hasChallenge('M',21)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100).times(player.M.sb11)
+       else if(hasUpgrade('M',72)&&!inChallenge('M',21)&&!hasUpgrade('M',511)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(100)
+       else if(hasUpgrade('M',43)&&!inChallenge('M',21)&&!hasUpgrade('M',72)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)).times(player.M.boostcap)
+       else if(hasUpgrade('M',31)&&!inChallenge('M',21)&&!hasUpgrade('M',43)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25)))&&!player.M.time2.gte(0.00001))player.points = player.M.cap.add(player.M.realeffect3).add(player.M.knowledge.pow(1.25))
+      else  if(hasUpgrade('M',22)&&!inChallenge('M',21)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))&&!player.M.time2.gte(0.00001))   player.points = new  Decimal(player.M.cap.add(player.M.realeffect3).add(player.M.knowledge))
+  else  if(!hasUpgrade('M',22)&&!inChallenge('M',21)&&!hasUpgrade('M',31)&&player.M.cap.add(player.M.realeffect3).gte(1500)&&player.points.gte(1500)&&!player.M.time2.gte(0.00001))    player.points = new  Decimal(1500)
+else if (!hasUpgrade('M',22)&&!inChallenge('M',21)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3)
+else  if(inChallenge('M',21)&&player.points.gte(tmp.pointGen))  player.points = tmp.pointGen
 if(hasUpgrade('M',522))player.M.effect3 = (player.points.add(1).log(5)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)).times(2))
 else if(hasChallenge('M',11)) player.M.effect3 = (player.points.add(1).log(5)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)))
 else if(hasUpgrade('M',14)) player.M.effect3 = (player.points.add(1).log(10)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)))
@@ -707,13 +737,18 @@ if(player.M.knowledge.gte(50000)) player.M.knowledge = new Decimal(50000)
 player.M.Energy=player.M.Energy.add(player.M.levelE.times(diff))
 if(player.M.Energy.gte(100)) player.M.Energy=new Decimal(100)
 if(inChallenge('M',11)) player.M.knowledge=new  Decimal(0)
-if(hasUpgrade('M',82))player.M.sp= (player.M.best.add(1).log(5)).add(getBuyableAmount('M',11))
-else player.M.sp= (player.M.best.add(1).log(10)).add(getBuyableAmount('M',11))
-if(player.M.sp.minus(player.M.scost).gte(player.M.sphave)) player.M.sphave=player.M.sp.minus(player.M.scost)
+if(hasUpgrade('M',82))player.M.sp= (player.M.best.add(1).log(5)).add(getBuyableAmount('M',11)).minus(player.M.scost)
+else player.M.sp= (player.M.best.add(1).log(10)).add(getBuyableAmount('M',11)).minus(player.M.scost)
+player.M.sphave=player.M.sp
 if(hasUpgrade('M',81))player.M.sb11=player.M.level1.add(player.M.level2).add(player.M.level3).times(3).add(10).log(8)
 else  player.M.sb11=player.M.level1.add(player.M.level2).add(player.M.level3).add(10).log(10)
 if(hasChallenge('M',22)) player.M.pcap=player.M.best.add(10).log(3).times(3)
 else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
+if(hasUpgrade('M',83)&&!player.M.sphave.gte(0))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83]
+else if(hasUpgrade('M',82)&&!player.M.sphave.gte(0))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82]
+else if(hasUpgrade('M',81)&&!player.M.sphave.gte(0)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81]
+else if(hasUpgrade('M',74)&&!player.M.sphave.gte(0)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74]
+if(!hasUpgrade('M',511)) player.M.scost=new  Decimal(0)
     },
     doReset(resettingLayer) {
         let keep = [];
@@ -742,7 +777,8 @@ else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
         if (resettingLayer == "M") keep.push("challenges")
         if (resettingLayer=="M")  knowledge= new Decimal(0)
         if (resettingLayer=="M")  player.M.devSpeed=new Decimal(1)
-        if (resettingLayer=="M") layerDataReset(this.layer, keep)
+        if (resettingLayer == "M") keep.push("scost")
+        if (resettingLayer=="M"||resettingLayer=="G") layerDataReset(this.layer, keep)
        
     },
     layerShown(){return true},
@@ -759,15 +795,15 @@ else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
             name: "No Tier 2",
             challengeDescription: "You can't use tier 2 magic",
             goal: new Decimal(2.5e10),
-            rewardDescription(){return "placeholder."},
+            rewardDescription(){return "The second tier 2 magic can active 2 seconds."},
           unlocked(){return hasUpgrade("M", 531)||inChallenge('M',12)||hasChallenge('M',12)},
         
         },
         21: {
-            name: "No gain boost",
-            challengeDescription: "You can't buy the second magic.",
-            goal: new Decimal(100000),
-            rewardDescription(){return "second magic effect x2."},
+            name: "Angry God",
+            challengeDescription: "MP hardcap is based on MP gain",
+            goal: new Decimal(2700000),
+            rewardDescription(){return "MP hardcap ^1.2."},
           unlocked(){return hasUpgrade("M", 532)||inChallenge('M',21)||hasChallenge('M',21)},
         
         },
@@ -812,6 +848,7 @@ else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
             ["row",[ ["upgrade",511]]],
             ["row",[ ["upgrade",521],["upgrade",522]]],
             ["row",[ ["upgrade",531],["upgrade",532],["upgrade",533]]],
+            ["row",[ ["upgrade",541]]],
             ["display-text",function(){
                 let s=""
             
@@ -1052,4 +1089,40 @@ addLayer("A", {
         },
     }
     
+})
+addLayer("G", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    }},
+
+    color: "#80c0ff",                       // The color for this layer, which affects many elements.
+    resource: "God Power",            // The name of this layer's main prestige resource.
+    row: 1,  
+    position: 1000,                               // The row this layer is on (0 is the first row).
+    baseResource: "MP",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+
+    requires(){return new Decimal("3.6e16")} ,              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+    exponent(){
+return 0.8
+ } ,     
+    base:100,                     // "normal" prestige gain is (currency^exponent).
+    
+    gainMult() {                            
+        mult= new Decimal(1)   
+        
+        return mult            
+    },
+    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+
+    layerShown() { return hasUpgrade('M',541)||player.G.points.gte(1) },          // Returns a bool for if this layer's node should be visible in the tree.
+
+  
+       
 })
