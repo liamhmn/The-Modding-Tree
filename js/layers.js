@@ -989,7 +989,7 @@ if(!hasUpgrade('M',511)) player.M.scost=new  Decimal(0)
                
             ],
             unlocked(){
-                    return hasMilestone('M',1)
+                    return hasMilestone('M',1)||player.G.points.gte(1)
             },
     },
     
