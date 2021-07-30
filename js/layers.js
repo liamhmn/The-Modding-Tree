@@ -210,7 +210,7 @@ addLayer("M", {
                                                 player.devSpeed = player.M.speed
                             
                                                 },
-                                                unlocked(){return (hasMilestone('M',1))}
+                                                unlocked(){return (hasMilestone('M',1)||player.G.points.gte(1))}
                                             },
                                             222:{
                                                 display() {return "Time speed x2"},
@@ -220,7 +220,7 @@ addLayer("M", {
                                                     player.devSpeed = player.M.speed
                                                   
                                                     },
-                                                    unlocked(){return (hasMilestone('M',1))}
+                                                    unlocked(){return (hasMilestone('M',1)||player.G.points.gte(1))}
                                                 },
                                                 251:{
                                                     display() {return "Get 1 Energy per second.<br>Cost: " +format(player.M.costE) + " MP"},
