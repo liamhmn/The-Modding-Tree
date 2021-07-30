@@ -45,6 +45,7 @@ addLayer("M", {
         sb11: new Decimal(0),
         best: new Decimal(0),
         bcost: new Decimal(100),
+        can15: new Decimal(0),
     }},
     color: "#c000c0",
     requires: new Decimal("51000"), // Can be a function that takes requirement increases into account
@@ -54,7 +55,7 @@ addLayer("M", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        if(hasMilestone('G',2))  return 0.7
+        if(hasMilestone('G',2))  return 0.75
     else if(hasUpgrade('M',84))   return 0.5
      else   return 0.1}, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -232,6 +233,16 @@ addLayer("M", {
                                                         },
                                                         unlocked(){return (hasUpgrade('M',63))}
                                                     },
+                                                    315:{
+                                                        display() {return "Explore A New Upgrade.<br>Req: Reach 5e15 MP with out study"},
+                                                        canClick(){return player.points.gte(5e15)&&!hasUpgrade('M',511)},
+                                                        onClick(){
+                                                         
+                                                          player.M.can15 = new Decimal(1)
+                                                          
+                                                            },
+                                                            unlocked(){return (hasMilestone('G',2)&&! player.M.can15.gte(1))}
+                                                        },
 1001:{
 display() {return "Reset your study."},
 canClick(){return true},
@@ -269,7 +280,7 @@ unlocked(){return (hasUpgrade('M',74))}
         },
         13: {
             title:"The knowledge of the Solar system.",
-            description: "MP gain x1.5 and MP gain per second boost the third Magic effect.",
+            description: "MP gain x1.5 and MP gain boost the third Magic effect.",
             cost: new Decimal(300),
             currencyDisplayName: "MP",
             currencyInternalName:"points",
@@ -284,6 +295,14 @@ unlocked(){return (hasUpgrade('M',74))}
             currencyLayer:"M",
             unlocked(){return hasUpgrade('M',13)}
         },
+        15: {
+            title:"The knowledge of ?.",
+            description: "Boost Power second hardcap.",
+            cost: new Decimal(5e16),
+            currencyDisplayName: "MP",
+            currencyInternalName:"points",
+            unlocked(){return player.M.can15.gte(1)}
+        },
         21: {
             title:"The knowledge of the People.",
             description: "Unlock a magic",
@@ -295,14 +314,16 @@ unlocked(){return (hasUpgrade('M',74))}
         },
         22: {
             title:"The knowledge of the animal.",
-            description: "Remove the hardcap of boost hardcap and knowledge boost MP cap. Buy upgrade will not reset your knowledge.",
+            description: "Remove the hardcap of hardcap and knowledge boost MP cap.",
             cost: new Decimal(100),
             currencyDisplayName: "knowledge",
             currencyInternalName:"knowledge",
             currencyLayer:"M",
-            onPurchase(){
-player.M.knowledge= player.M.knowledge.add(100)
-
+            style() { return {
+              
+                "height": "100px",
+                "width": "125px"
+                }
             },
             unlocked(){return hasUpgrade('M',21)}
         },
@@ -761,7 +782,8 @@ else player.M.sp= (player.M.best.add(1).log(10)).add(getBuyableAmount('M',11)).m
 player.M.sphave=player.M.sp
 if(hasUpgrade('M',81))player.M.sb11=player.M.level1.add(player.M.level2).add(player.M.level3).times(3).add(10).log(8)
 else  player.M.sb11=player.M.level1.add(player.M.level2).add(player.M.level3).add(10).log(10)
-if(hasChallenge('M',22)) player.M.pcap=player.M.best.add(10).log(3).times(3)
+if(hasUpgrade('M',15)) player.M.pcap=player.M.best.add(10).log(2).times(3.5)
+else if(hasChallenge('M',22)) player.M.pcap=player.M.best.add(10).log(3).times(3)
 else  if(hasUpgrade('M',82))player.M.pcap=player.M.best.add(10).log(10).times(3)
 if(hasUpgrade('M',83)&&!player.M.sphave.gte(0))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83]
 else if(hasUpgrade('M',82)&&!player.M.sphave.gte(0))  player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82]
@@ -1027,7 +1049,7 @@ if(hasMilestone('G',1))player.M.bcost =new  Decimal(10)
             "Knowledge Upgrade": {
                     content: [
                      
-                        ["row",[ ["upgrade",11], ["upgrade",12], ["upgrade",13], ["upgrade",14]]],
+                        ["row",[ ["upgrade",11], ["upgrade",12], ["upgrade",13], ["upgrade",14], ["clickable",315], ["upgrade",15]]],
                         ["row",[ ["upgrade",21], ["upgrade",22], ["upgrade",23], ["upgrade",24]]],
                         ["row",[ ["upgrade",31], ["upgrade",32], ["upgrade",33], ["upgrade",34]]],
                         ["row",[ ["upgrade",41], ["upgrade",42], ["upgrade",43], ["upgrade",44]]]
@@ -1157,7 +1179,7 @@ return 1
         },
         2: {
             requirementDescription: "2 God power",
-            effectDescription: "Keep First 16 upgrade on reset. Get more Magic power",
+            effectDescription: "Keep First 16 upgrade on reset. Get more Magic power and You can explore further Magic Upgrades.",
             done() { return player.G.points.gte(2) }
         },
         
