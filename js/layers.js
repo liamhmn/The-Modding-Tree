@@ -44,6 +44,7 @@ addLayer("M", {
         scost: new Decimal(0),
         sb11: new Decimal(0),
         best: new Decimal(0),
+        bcost: new Decimal(100),
     }},
     color: "#c000c0",
     requires: new Decimal("51000"), // Can be a function that takes requirement increases into account
@@ -53,7 +54,8 @@ addLayer("M", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-     if(hasUpgrade('M',84))   return 0.5
+        if(hasMilestone('G',2))  return 0.7
+    else if(hasUpgrade('M',84))   return 0.5
      else   return 0.1}, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
@@ -472,11 +474,12 @@ player.M.knowledge= player.M.knowledge.add(100)
         },
         71: {
             title:"The Power of the organ system",
-            description: "Unlock a challenge,  keep upgrade on reset.",
+            description: "Unlock a challenge, keep upgrade on reset.",
             cost: new Decimal(21000000),
             currencyDisplayName: "MP",
             currencyInternalName:"points",
-            unlocked(){return hasUpgrade('M',64)}
+            unlocked(){return hasUpgrade('M',64)|| hasUpgrade('M',71)}
+        
         },
         72: {
             title:"The Power of the animal",
@@ -602,7 +605,7 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyDisplayName: "Study point",
             currencyInternalName:"sphave",
             currencyLayer:"M",
-            branches: [541],
+            branches: [541,542],
             unlocked(){return hasUpgrade('M',82)},
             onPurchase(){
                 player.M.scost=player.M.scost.add(2)
@@ -617,6 +620,7 @@ player.M.knowledge= player.M.knowledge.add(100)
             currencyDisplayName: "Study point",
             currencyInternalName:"sphave",
             currencyLayer:"M",
+            branches: [542],
             unlocked(){return hasUpgrade('M',82)},
             onPurchase(){
                 player.M.scost=player.M.scost.add(7)
@@ -638,6 +642,20 @@ player.M.knowledge= player.M.knowledge.add(100)
             canAfford(){return  hasUpgrade('M',531)&&hasUpgrade('M',532)},
             style: { margin: "20px" }
         },
+        542: {
+          
+            description: "Total Study point boost third magic effect and third magic effect is better.",
+            cost: new Decimal(8),
+            currencyDisplayName: "Study point",
+            currencyInternalName:"sphave",
+            currencyLayer:"M",
+            unlocked(){return hasChallenge('M',21)},
+            onPurchase(){
+                player.M.scost=player.M.scost.add(8)
+            player.M.sphave=player.M.sp.minus(player.M.scost)},
+            canAfford(){return  hasUpgrade('M',532)&&hasUpgrade('M',533)},
+            style: { margin: "20px" }
+        },
     },
     buyables: {
         rows: 2,
@@ -645,15 +663,15 @@ player.M.knowledge= player.M.knowledge.add(100)
         11: {
             title: "Buy a study point.",
             display() {
-               return "Cost : " + format(new Decimal("100").pow(getBuyableAmount("M", 11).add(1))) + " Magic power"
+               return "Cost : " + format(player.M.bcost.pow(getBuyableAmount("M", 11).add(1))) + " Magic power"
             },
             unlocked() { return hasUpgrade("M", 83)},
             canAfford() { 
-                return player.M.points.gte(new Decimal("100").pow(getBuyableAmount("M", 11).add(1))) 
+                return player.M.points.gte(player.M.bcost.pow(getBuyableAmount("M", 11).add(1))) 
             },
             buy() { 
                 {
-                   player.M.points = player.M.points.minus(new Decimal("100").pow(getBuyableAmount("M", 11).add(1)))
+                   player.M.points = player.M.points.minus(player.M.bcost.pow(getBuyableAmount("M", 11).add(1)))
                 }
                 setBuyableAmount("M", 11, getBuyableAmount("M", 11).add(1))
             },
@@ -694,7 +712,8 @@ player.M.knowledge= player.M.knowledge.add(100)
   else  if(!hasUpgrade('M',22)&&!inChallenge('M',21)&&!hasUpgrade('M',31)&&player.M.cap.add(player.M.realeffect3).gte(1500)&&player.points.gte(1500)&&!player.M.time2.gte(0.00001))    player.points = new  Decimal(1500)
 else if (!hasUpgrade('M',22)&&!inChallenge('M',21)&&!hasUpgrade('M',31)&&player.points.gte(player.M.cap.add(player.M.realeffect3))&&!player.M.time2.gte(0.00001)) player.points = player.M.cap.add(player.M.realeffect3)
 else  if(inChallenge('M',21)&&player.points.gte(tmp.pointGen))  player.points = tmp.pointGen
-if(hasUpgrade('M',522))player.M.effect3 = (player.points.add(1).log(5)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)).times(2))
+if(hasUpgrade('M',542))player.M.effect3 = (player.points.add(1).log(3)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(2).times(player.M.knowledge.pow(0.3).add(1)).times(2).times((player.M.best.add(1).log(5)).add(getBuyableAmount('M',11))))
+else if(hasUpgrade('M',522))player.M.effect3 = (player.points.add(1).log(5)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)).times(2))
 else if(hasChallenge('M',11)) player.M.effect3 = (player.points.add(1).log(5)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)))
 else if(hasUpgrade('M',14)) player.M.effect3 = (player.points.add(1).log(10)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8).times(player.M.knowledge.pow(0.2).add(1)))
 else  if(hasUpgrade('M',13)) player.M.effect3 = (player.points.add(1).log(10)).pow(3).times(new Decimal(3).add(player.M.Boost).times(1.5).log(8))
@@ -749,8 +768,12 @@ else if(hasUpgrade('M',82)&&!player.M.sphave.gte(0))  player.M.upgrades=[11,12,1
 else if(hasUpgrade('M',81)&&!player.M.sphave.gte(0)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81]
 else if(hasUpgrade('M',74)&&!player.M.sphave.gte(0)) player.M.upgrades=[11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74]
 if(!hasUpgrade('M',511)) player.M.scost=new  Decimal(0)
+if(hasMilestone('G',1))player.M.bcost =new  Decimal(10)
     },
     doReset(resettingLayer) {
+        let extraUpgrades = [];
+     if(hasMilestone('G',1)) extraUpgrades.push(71,72);
+     if(hasMilestone('G',2)) extraUpgrades.push(11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44);
         let keep = [];
         
         if (resettingLayer=="M")    cap= new Decimal(30)
@@ -774,11 +797,14 @@ if(!hasUpgrade('M',511)) player.M.scost=new  Decimal(0)
         if (resettingLayer=="M") poin= tmp.M.resetGain
         if (resettingLayer == "M") keep.push("points")
         if (resettingLayer == "M"&&hasUpgrade('M',71)) keep.push("upgrades")
+        if (resettingLayer == "M") keep.push("milestones")
+        if (resettingLayer == "G") keep.push("milestones")
         if (resettingLayer == "M") keep.push("challenges")
         if (resettingLayer=="M")  knowledge= new Decimal(0)
-        if (resettingLayer=="M")  player.M.devSpeed=new Decimal(1)
+        if (resettingLayer=="M")  player.devSpeed=new Decimal(1)
         if (resettingLayer == "M") keep.push("scost")
         if (resettingLayer=="M"||resettingLayer=="G") layerDataReset(this.layer, keep)
+        player[this.layer].upgrades.push(...extraUpgrades)
        
     },
     layerShown(){return true},
@@ -848,7 +874,7 @@ if(!hasUpgrade('M',511)) player.M.scost=new  Decimal(0)
             ["row",[ ["upgrade",511]]],
             ["row",[ ["upgrade",521],["upgrade",522]]],
             ["row",[ ["upgrade",531],["upgrade",532],["upgrade",533]]],
-            ["row",[ ["upgrade",541]]],
+            ["row",[ ["upgrade",541],["upgrade",542]]],
             ["display-text",function(){
                 let s=""
             
@@ -1108,9 +1134,9 @@ addLayer("G", {
 
     type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent(){
-return 0.8
+return 1
  } ,     
-    base:100,                     // "normal" prestige gain is (currency^exponent).
+    base:2,                     // "normal" prestige gain is (currency^exponent).
     
     gainMult() {                            
         mult= new Decimal(1)   
@@ -1123,6 +1149,19 @@ return 0.8
 
     layerShown() { return hasUpgrade('M',541)||player.G.points.gte(1) },          // Returns a bool for if this layer's node should be visible in the tree.
 
+    milestones: {
+        1: {
+            requirementDescription: "1 God power",
+            effectDescription: "Keep M milestone, The Power of the organ system and The Power of the animal on reset. Study point buyable is cheaper",
+            done() { return player.G.points.gte(1) }
+        },
+        2: {
+            requirementDescription: "2 God power",
+            effectDescription: "Keep First 16 upgrade on reset. Get more Magic power",
+            done() { return player.G.points.gte(2) }
+        },
+        
+    },
   
        
 })
