@@ -1,26 +1,28 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
+	name: "The reverse Tree",
+	id: "reverse",
+	author: "3^3=7",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.0.1",
+	name: "Reverse machine",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+<h3>v0.0.1</h3><br>
+- Added machine power.<br>
+- Added 6 clickable.<br>
+- Added 1 upgrade.<br>
+- Endgame: 5000 points and buy "unlock a layer" once.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -43,6 +45,9 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+if(player.ma.machineamount.gte(1))	gain = gain.times(tmp.ma.machine1eff)
+if(player.ma.machineamount.gte(2))	gain = gain.times(tmp.ma.machine2eff)
+if(hasUpgrade('ma',11))	gain = gain.times(new Decimal(2).pow(player.ma.upgrades.length))
 	return gain
 }
 
@@ -56,7 +61,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("5000"))&&player.ma.layeramount.gte(2)
 }
 
 
