@@ -13,11 +13,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
-	name: "Reverse machine",
+	num: "0.1",
+	name: "Reverse master",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.1</h3><br>
+- Added mastery brick.<br>
+- Added 5 clickable.<br>
+- Added 6 upgrade.<br>
+- Added 3 challenge.<br>
+- Endgame: 1e22 points and buy "unlock a layer" three times.<br>
+<h3>v0.0.2</h3><br>
+- Added gear.<br>
+- Added 2 clickable.<br>
+- Added 3 upgrade.<br>
+- Added 3 challenge.<br>
+- Endgame: 2.5e13 points and buy "unlock a layer" twice.<br>
 <h3>v0.0.1</h3><br>
 - Added machine power.<br>
 - Added 6 clickable.<br>
@@ -47,8 +59,14 @@ function getPointGen() {
 	let gain = new Decimal(1)
 if(player.ma.machineamount.gte(1))	gain = gain.times(tmp.ma.machine1eff)
 if(player.ma.machineamount.gte(2))	gain = gain.times(tmp.ma.machine2eff)
+if(player.ma.machineamount.gte(5))	gain = gain.times(tmp.ma.machine5eff)
+if(player.ma.machineamount.gte(6))	gain = gain.times(tmp.ma.machine6eff)
 if(hasUpgrade('ma',11))	gain = gain.times(new Decimal(2).pow(player.ma.upgrades.length))
+if(hasChallenge('g',101))	gain = gain.times(new Decimal(2).pow(player.g.upgrades.length))
 if(hasUpgrade('ma',12))	gain = gain.times(upgradeEffect('ma',12))
+if(inChallenge('g',101)) gain = gain.div(player.ma.nerfmorenerf)
+if(inChallenge('g',21))gain = gain.pow(0.5)
+if(inChallenge('g',22))gain = gain.pow(0.25)
 	return gain
 }
 
@@ -62,7 +80,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("5000"))&&player.ma.layeramount.gte(2)
+	return player.points.gte(new Decimal("1e22"))&&player.ma.layeramount.gte(3)
 }
 
 
