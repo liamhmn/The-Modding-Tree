@@ -48,6 +48,7 @@ function getPointGen() {
 if(player.ma.machineamount.gte(1))	gain = gain.times(tmp.ma.machine1eff)
 if(player.ma.machineamount.gte(2))	gain = gain.times(tmp.ma.machine2eff)
 if(hasUpgrade('ma',11))	gain = gain.times(new Decimal(2).pow(player.ma.upgrades.length))
+if(hasUpgrade('ma',12))	gain = gain.times(upgradeEffect('ma',12))
 	return gain
 }
 
