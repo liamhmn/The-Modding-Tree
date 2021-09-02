@@ -399,7 +399,12 @@ addLayer("mb", {
     clickables: {
         11: {
             display() {return"Reset Mastery buliding."},   
-           onClick(){player.mb.usedbrick=new Decimal(0);player.mb.building1=new Decimal(0);player.mb.building2=new Decimal(0);player.points=new Decimal(0)},
+           onClick(){
+            if(confirm("This will force a Mastery reset! Are you sure?")){
+                player.mb.usedbrick=new Decimal(0);
+                player.mb.building1=new Decimal(0)
+                player.mb.building2=new Decimal(0)
+                doReset(this.layer,true)}},
            canClick(){return true},   
            style() { return {"font-size": "14px","height": "100px","width": "200px"}},
             unlocked(){return true},
