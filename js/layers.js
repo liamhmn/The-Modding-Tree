@@ -490,4 +490,98 @@ addLayer("mb", {
 
 
 })
+addLayer("i", {
+    symbol: "I", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        building1: new Decimal(0),
+        building2: new Decimal(0),
+        bestbrick: new Decimal(0),
+        usedbrick: new Decimal(0),
+        unusedbrick: new Decimal(0),
+    }},
+    color: "#e5dab7",
+    requires: new Decimal(1e23),    
+    resource: "imperium brick", // Name of prestige currency
+    baseResource: "machine power", // Name of resource prestige is based on
+    baseAmount() {return player.ma.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.5, // Prestige currency exponent
+    base:1e4,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "i", description: "I: Reset for imperium brick", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    clickables: {
+        11: {
+            display() {return"<h3>Imperium Building 1</h3><br>Unlock a new gear upgrade.<br><br>(level "+player.mb.building1+")<br>Cost: "+tmp.mb.cost1+" Mastery bricks"},   
+           onClick(){player.mb.usedbrick=player.mb.usedbrick.add(tmp.mb.cost1);player.mb.building1=player.mb.building1.add(1)},
+           canClick(){return player.mb.unusedbrick.gte(tmp.mb.cost1)},   
+           style() { return {"font-size": "14px","height": "200px","width": "200px"}},
+            unlocked(){return hasUpgrade('ma',14)},
+           
+        },
+      
+     },
+     milestones: {
+        0: {
+            requirementDescription: "1 Imperium brick",
+            effectDescription: "Keep machine on reset.",
+            done() { return player.i.points.gte(1) }
+        },
+    },
+     cost1(){
+        let req=new Decimal(1)
+        if(player.mb.building1.gte(1))req=new Decimal(0)
+        if(player.mb.building1.gte(2))req=new Decimal(0)
+        if(player.mb.building1.gte(3))req=new Decimal(10)
+        req=req.add(player.mb.building1).add(player.mb.building2)
+        return req
+    },
+    cost2(){
+        let req=new Decimal(2)
+        if(player.mb.building2.gte(1))req=new Decimal(2)
+        if(player.mb.building2.gte(2))req=new Decimal(10)
+        req=req.add(player.mb.building1).add(player.mb.building2)
+        return req
+    },
+    update(diff){player.mb.bestbrick=player.mb.best;player.mb.unusedbrick=player.mb.bestbrick.sub(player.mb.usedbrick)},
+    layerShown(){return player.ma.layeramount.gte(3)},
+    tabFormat: {
+        "Milestones": {
+            unlocked(){return true},
+            content: [
+                "main-display",
+                "prestige-button",
+                  "blank",
+                "milestones",
+                
+            ]
+        },
+        "Buildings": {
+            unlocked(){return true},
+            content: [
+                "main-display",
+                "prestige-button",
+
+                  "blank",
+                "clickables",
+                
+            ]
+        },
+
+    },
+
+
+})
+
 
