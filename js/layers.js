@@ -20,7 +20,7 @@ addLayer("ma", {
         mult = new Decimal(1)
         if(player.ma.machineamount.gte(3)) mult=mult.times(tmp.ma.machine3eff)
         if(player.ma.machineamount.gte(4)) mult=mult.times(tmp.ma.machine4eff)
-        if(hasUpgrade('g',14)&&!inChallenge('g',12)&&player.mb.building1.gte(4)) mult=mult.times(upgradeEffect('m',13))
+        if(hasUpgrade('g',14)&&!inChallenge('g',12)&&player.mb.building1.gte(3)) mult=mult.times(upgradeEffect('ma',13))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -103,7 +103,10 @@ addLayer("ma", {
             description:"Gear boost themselves.",
             cost: new Decimal(3.14e9),
             unlocked(){return player.ma.upgradeamount.gte(3)},
-            effect(){return player.g.points.add(1).log(10).add(1).pow(0.75)},
+            effect(){
+                let exp = new Decimal(0.75)
+                if(hasUpgrade('g',15)) exp=exp.times(2)
+                return player.g.points.add(1).log(10).add(1).pow(exp)},
             effectDisplay(){return format(upgradeEffect('ma',13))+"x"},
         }, 
         14: {
@@ -157,17 +160,20 @@ addLayer("ma", {
         let exp = new Decimal(1.25)
         if(inChallenge('g',102)) exp = new Decimal(0)
         if(hasChallenge('g',21)&&!inChallenge('g',12)) exp = exp.times(1.75)
+        exp = exp.times(player.i.building1.times(0.5).add(1))
         let eff=player.ma.machineamount.add(1).pow(exp)
         return eff
     },
     machine6eff(){
         let exp = new Decimal(2)
         if(inChallenge('g',102)) exp = new Decimal(0)
+        exp = exp.times(player.i.building1.times(0.5).add(1))
         let eff=player.mb.points.add(1).pow(exp)
         return eff
     },
      machine7eff(){
         let exp = new Decimal(1.314)  
+        exp = exp.times(player.i.building1.times(0.5).add(1))
         let eff=player.points.add(1).log(10).add(1).pow(exp)
         return eff
     },
@@ -218,6 +224,12 @@ addLayer("ma", {
           
             ]
         },
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+keep.push("machineamount")
+keep.push("layeramount")
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     passiveGeneration(){return hasMilestone('mb',0)},
     update(diff){
@@ -322,13 +334,18 @@ addLayer("g", {
             cost: new Decimal(3.14e9),
             unlocked(){return player.mb.building1.gte(3)}
         }, 
+        15: {
+            description: "Third Machine upgrade effect ^2",
+            cost: new Decimal(5e12),
+            unlocked(){return player.mb.building1.gte(4)}
+        }, 
     },
     unlockreq(){
         let req=new Decimal(1)
         if(player.g.points.gte(1))req=new Decimal(1000)
         if(player.g.points.gte(1000))req=new Decimal(1e6)
         if(player.g.points.gte(1e6))req=new Decimal(1e11)
-        if(player.g.points.gte(1e11))req=new Decimal(1e20)
+        if(player.g.points.gte(1e11))req=new Decimal(1e1000)
         return req
     },
     layerShown(){return player.ma.layeramount.gte(2)},
@@ -415,7 +432,7 @@ addLayer("mb", {
            onClick(){player.mb.usedbrick=player.mb.usedbrick.add(tmp.mb.cost1);player.mb.building1=player.mb.building1.add(1)},
            canClick(){return player.mb.unusedbrick.gte(tmp.mb.cost1)},   
            style() { return {"font-size": "14px","height": "200px","width": "200px"}},
-            unlocked(){return hasUpgrade('ma',14)},
+            unlocked(){return true},
            
         },
         32: {
@@ -423,7 +440,7 @@ addLayer("mb", {
            onClick(){player.mb.usedbrick=player.mb.usedbrick.add(tmp.mb.cost2);player.mb.building2=player.mb.building2.add(1)},
            canClick(){return player.mb.unusedbrick.gte(tmp.mb.cost2)},   
            style() { return {"font-size": "14px","height": "200px","width": "200px"}},
-            unlocked(){return true},
+            unlocked(){return hasUpgrade('ma',14)},
            
         },
       
@@ -444,17 +461,19 @@ addLayer("mb", {
         let req=new Decimal(1)
         if(player.mb.building1.gte(1))req=new Decimal(0)
         if(player.mb.building1.gte(2))req=new Decimal(0)
-        if(player.mb.building1.gte(3))req=new Decimal(10)
+        if(player.mb.building1.gte(3))req=new Decimal(0)
+        if(player.mb.building1.gte(4))req=new Decimal("1e1000")
         req=req.add(player.mb.building1).add(player.mb.building2)
         return req
     },
     cost2(){
         let req=new Decimal(2)
         if(player.mb.building2.gte(1))req=new Decimal(2)
-        if(player.mb.building2.gte(2))req=new Decimal(10)
+        if(player.mb.building2.gte(2))req=new Decimal("1e1000")
         req=req.add(player.mb.building1).add(player.mb.building2)
         return req
     },
+
     update(diff){player.mb.bestbrick=player.mb.best;player.mb.unusedbrick=player.mb.bestbrick.sub(player.mb.usedbrick)},
     layerShown(){return player.ma.layeramount.gte(3)},
     tabFormat: {
@@ -497,10 +516,6 @@ addLayer("i", {
         unlocked: false,
 		points: new Decimal(0),
         building1: new Decimal(0),
-        building2: new Decimal(0),
-        bestbrick: new Decimal(0),
-        usedbrick: new Decimal(0),
-        unusedbrick: new Decimal(0),
     }},
     color: "#e5dab7",
     requires: new Decimal(1e23),    
@@ -523,11 +538,11 @@ addLayer("i", {
     ],
     clickables: {
         11: {
-            display() {return"<h3>Imperium Building 1</h3><br>Unlock a new gear upgrade.<br><br>(level "+player.mb.building1+")<br>Cost: "+tmp.mb.cost1+" Mastery bricks"},   
-           onClick(){player.mb.usedbrick=player.mb.usedbrick.add(tmp.mb.cost1);player.mb.building1=player.mb.building1.add(1)},
-           canClick(){return player.mb.unusedbrick.gte(tmp.mb.cost1)},   
+            display() {return"<h3>Imperium Building 1</h3><br>Second row machine is stronger.<br><br>(level "+player.i.building1+")<br>Cost: "+tmp.i.cost1+" Imperium bricks"},   
+           onClick(){player.i.points=player.i.points.minus(tmp.i.cost1);player.i.building1=player.i.building1.add(1)},
+           canClick(){return player.i.points.gte(tmp.i.cost1)},   
            style() { return {"font-size": "14px","height": "200px","width": "200px"}},
-            unlocked(){return hasUpgrade('ma',14)},
+            unlocked(){return true},
            
         },
       
@@ -535,26 +550,16 @@ addLayer("i", {
      milestones: {
         0: {
             requirementDescription: "1 Imperium brick",
-            effectDescription: "Keep machine on reset.",
+            effectDescription: "Keep machine and layer on reset.",
             done() { return player.i.points.gte(1) }
         },
     },
      cost1(){
         let req=new Decimal(1)
-        if(player.mb.building1.gte(1))req=new Decimal(0)
-        if(player.mb.building1.gte(2))req=new Decimal(0)
-        if(player.mb.building1.gte(3))req=new Decimal(10)
-        req=req.add(player.mb.building1).add(player.mb.building2)
+        if(player.i.building1.gte(1))req=new Decimal(1e1000)
+        req=req.add(player.i.building1)
         return req
     },
-    cost2(){
-        let req=new Decimal(2)
-        if(player.mb.building2.gte(1))req=new Decimal(2)
-        if(player.mb.building2.gte(2))req=new Decimal(10)
-        req=req.add(player.mb.building1).add(player.mb.building2)
-        return req
-    },
-    update(diff){player.mb.bestbrick=player.mb.best;player.mb.unusedbrick=player.mb.bestbrick.sub(player.mb.usedbrick)},
     layerShown(){return player.ma.layeramount.gte(3)},
     tabFormat: {
         "Milestones": {

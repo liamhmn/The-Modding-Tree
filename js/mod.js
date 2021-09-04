@@ -13,11 +13,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Reverse master",
+	num: "0.1.1 alpha 1",
+	name: "Reversing",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.1.1 alpha 1</h3><br>
+- Added imperium brick.<br>
+- Added 1 clickable.<br>
+- Endgame: 2 imperium brick.<br>
 <h3>v0.1</h3><br>
 - Added mastery brick.<br>
 - Added 5 clickable.<br>
@@ -80,7 +84,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e22"))&&player.ma.layeramount.gte(3)
+	return player.i.points.gte(new Decimal("2"))
 }
 
 
