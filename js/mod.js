@@ -3,7 +3,7 @@ let modInfo = {
 	id: "factor",
 	author: "3^3=7",
 	pointsName:"points",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["X.js", "tree.js","Number.js","NegativeNumber.js","UpgradeFactor.js","Factor.js","Infinity.js","Achievement.js","FactorShift.js","InfinityPoint.js","MathematicsSymbol.js","EternityPoints.js","Ordinal.js","Mathematician.js","Shape.js"],
 
 	discordName: "",
 	discordLink: "",
