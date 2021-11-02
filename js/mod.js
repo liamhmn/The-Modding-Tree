@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1.7.1",
+	num: "0.3.1.8",
 	name: "AGAIN",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.3.1.8</h3><br>
+- Rewrite 4 upgrade after 1 ???<br>
+- Add 3 Achievements<br>
+- Add 1 UF challenge<br>
+- Add 2 UF clickable<br>
+- Endgame: Complete Upgrader Gamma and 1 ???.<br>
 <h3>v0.3.1.7.1</h3><br>
 - Rewrite 3 upgrade after 1 ???<br>
 - Endgame: 1.8e308 points and 1 ???.<br>
@@ -369,6 +375,7 @@ function getPointGen() {
 	if(hasMilestone('F', 19))gain = gain.times(100)
 	if(inChallenge('UF', 201))gain = new Decimal(1)
 	if (hasMilestone('I', 4)) gain = gain.times(player.UF.CP.pow(4).add(1))
+	if (hasMilestone('F', 1100)&&player.X.points.gte(1))gain = gain.times(player.F.points.pow(1.5).add(1))
 	gain = gain.pow(getPointGenExp())
 	return gain
 }
@@ -402,7 +409,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	function(){	
 		let s=""
-		if (player.X.best.gte(1)&&player.I.points.gte(4))  s+= "Congratulations, You reach the endgame."
+		if (player.X.best.gte(1)&&hasChallenge("UF",211))  s+= "Congratulations, You reach the endgame."
 		else if (player.X.best.gte(1))  s+= "You have 0 layers left to unlock."					
 		else if (player.S.best.gte(1))  s+= "You have 1 layer left to unlock.<br> Next layer at '1.798F308' upgrade (Just a upgrade name)."
 		else if (player.M.best.gte(1)&&player.O.best.gte(1))  s+="You have 2 layers left to unlock.<br> Next layer at 1.80e308 Infinity."
@@ -423,7 +430,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.X.points.gte(1)&&player.points.gte(1.79e308)
+	return player.X.best.gte(1)&&hasChallenge("UF",211)
 }
 
 

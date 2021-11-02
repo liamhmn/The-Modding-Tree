@@ -68,7 +68,9 @@ addLayer("I", {
         },
         5: {
             requirementDescription: "5 Infinity",
-            effectDescription: "Unlock more challenge.",
+            effectDescription() {
+              if(player.X.points.gte(1))    return "Unlock more challenge and unlock a new layer."
+              else  return "Unlock more challenge."},
             done() { return player.I.points.gte(5) }
         },
         6: {

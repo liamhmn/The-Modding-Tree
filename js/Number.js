@@ -49,6 +49,7 @@ addLayer("N", {
         if (hasMilestone('F', 1)) mult = mult.times(player.F.points.add(1))
         if (hasMilestone('MS', 1)) mult = mult.times(1e20)
         if (hasMilestone('F', 1100)) mult = mult.times(player.F.points.add(1))
+        if (hasMilestone('F', 1100)&&player.X.points.gte(1)) mult = mult.times(player.F.points.pow(1.5).add(1))
         if (hasMilestone('UF', 52)||hasUpgrade('N',31)) mult = mult.times(player.UF.points.pow(3).add(1))
         if (hasMilestone('UF', 35)) mult = mult.times(player.UF.points.pow(5).add(1))
         if (hasMilestone('UF', 128)) mult = mult.times(player.UF.points.pow(3).add(1))
@@ -63,6 +64,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
   if(hasUpgrade('F',14)&&player.X.points.gte(1)) mult = mult.times(2.5)
 
     if(hasUpgrade('F',102))mult = mult.times(player.F.FP.add(1))
+    if(inChallenge("UF",211))mult = new Decimal(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -149,7 +151,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       if(hasUpgrade('MS',83))mult = mult.times(10)
       if(hasUpgrade('F',104))mult = mult.times(1.0777)
       mult = mult.times(new Decimal(1).minus(player.X.points.times(0.05)))
-   
+      if(inChallenge("UF",211))mult = new Decimal(1)
         return mult
 
     },
@@ -204,6 +206,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(2e6)
             else    return new Decimal(5)},
             effect() {
+                if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122)) return new Decimal("1e75")
                 if(hasChallenge('UF',102)) return player.N.points.tetrate(0.4).pow(0.5).add(1).min(1e65)
                 if (inChallenge("F",32)||inChallenge("F",13)||inChallenge("F",12)) return 1
@@ -235,6 +238,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
             else    return new Decimal(20)},
           
             effect() {
+                if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e105
                 if(hasChallenge('UF',122))return new Decimal("1e100")
                 if(hasChallenge('UF',111))  return player.points.tetrate(0.55).add(1).min(1e100)
                 if (inChallenge("F",32)) return 1
@@ -264,6 +268,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(5e7)
             else    return new Decimal(60)},
             effect() {
+                if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122))return new Decimal("1e75")
                 if (player.N.points.gte("1e130")&&player.X.points.gte(1)&&hasChallenge('UF',112))return new Decimal("1e65")
                 if(hasChallenge('UF',112))  return player.points.tetrate(0.5).add(1)

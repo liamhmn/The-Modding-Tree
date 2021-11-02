@@ -17,6 +17,8 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
        canup6: new Decimal(0),
        canupa: new Decimal(0),
        canupb: new Decimal(0),
+       canupg: false,
+       canupd: false,
        page: new Decimal(1),   
      CP: new Decimal(0),
      CPgain: new Decimal(0),
@@ -415,6 +417,21 @@ rewardDescription(){return "Factor alpha is greater."},
         goalDescription(){return format(new Decimal("1e715").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
 rewardDescription(){return "Factor beta is greater."},
   unlocked(){return player.UF.canupb.gte(1)&&player.UF.page==2},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
+211: {  
+    name: "Upgrader gamma",
+    challengeDescription: "All upgrade that multiple Number gain are disabled.",
+    canComplete(){return player.N.points.gte(new Decimal("1e309").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
+        goalDescription(){return format(new Decimal("1e309").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
+rewardDescription(){return "Unlock a Factor Challenge. (not yet)"},
+  unlocked(){return player.UF.canupg&&player.UF.page==2},
   onEnter(){
       player.N.points=new  Decimal(0)
       player.points=new  Decimal(0)
@@ -1167,6 +1184,38 @@ clickables:{
         
         }
     },
+    211:{
+        display() {return "Explore A New Challenge.<br>Req: 1e10 Negative Number."},
+        canClick(){return player.NN.points.gte("1e10")},
+        onClick(){
+         
+            player.UF.canupg=true
+        },
+        unlocked(){return hasMilestone('I',5)&&!player.UF.canupg&&player.UF.page==2},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },
+    212:{
+        display() {return "Explore A New Challenge.<br>Req: Gain 1e1024 Number in no factor factor."},
+        canClick(){return player.N.points.gte("1e1024")&&inChallenge('F',22)},
+        onClick(){
+         
+            player.UF.canupd=true
+        },
+        unlocked(){return hasMilestone('I',5)&&!player.UF.canupd&&player.UF.page==2},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },
     10001:{
         display() {return "<"},
         canClick(){return player.UF.page.gte(2)},
@@ -1344,6 +1393,7 @@ microtabs: {
                 ["row",[["challenge",111], ["clickable",111],["challenge",112],["clickable",112],]],
                 ["row",[["challenge",121], ["clickable",121],["challenge",122], ["clickable",122],]],
                 ["row",[["challenge",201], ["clickable",201],["challenge",202], ["clickable",202],]],
+                ["row",[["challenge",211], ["clickable",211],["challenge",212], ["clickable",212],]],
                 ["row",[["clickable",10001],"blank",["clickable",10002]]],
 
             ],

@@ -83,6 +83,7 @@ else return new Decimal("1e450000") },
                 if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
                 if(inChallenge('IP',32))return new Decimal("1")
                 if(inChallenge('IP',22))return new Decimal("1")
+                if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(5).add(1)
                 if(player.X.points.gte(1))return player.NN.points.add(1).pow(3.1415926)
                 else if(hasUpgrade('IP',22)) return player.NN.points.add(1).pow(5).min("1e5000")
                 else if(hasUpgrade('NN',34)) return player.NN.points.add(1).pow(6).min("1e1500")
@@ -100,12 +101,14 @@ else return new Decimal("1e450000") },
         },
         13: {
             title: "-3",
-            description: " Points boost themselves",
+            description: "Points boost themselves",
             cost(){
-            return new Decimal(25)},
+                if(player.X.points.gte(1)) return new Decimal(3125)
+                else    return new Decimal(25)},
             effect() {
                 if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
                 if(inChallenge('IP',32))return new Decimal("1")
+                if(player.X.points.gte(1)) return player.points.add(1).pow(0.18)
                 if (player.points.gte("1e10000")) return new Decimal("1e2000")
                 else if(hasUpgrade('IP',32)) return player.points.add(1).pow(0.2)
                 else if (hasUpgrade('NN',31)) return player.points.add(1).pow(0.15)
@@ -113,16 +116,18 @@ else return new Decimal("1e450000") },
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return hasUpgrade("NN", 31)&&!inChallenge('NN',11)&&!hasChallenge('NN',11)
+                return (hasAchievement("A", 74))&&!inChallenge('NN',11)&&!hasChallenge('NN',11)
         },
     },
     14: {
         title: "-4",
         description: "Negative Numbers boost themselves",
         cost(){
-            if(player.X.points.gte(1)) return new Decimal(1e25)
+            if(player.X.points.gte(1)) return new Decimal(31415)
         else    return new Decimal(15)},
         effect() {
+            if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(0.4).add(1).min(1e12)
+            if(player.X.points.gte(1)) return player.NN.points.pow(0.375).add(1).min(1e5)
             if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
             if(inChallenge('IP',32))return new Decimal("1")
             if(inChallenge('IP',12))return new Decimal("1")
@@ -147,7 +152,9 @@ else return new Decimal("1e450000") },
     15: {
         title: "-5",
         description: "Boost '2', '3', '4'.",
-        cost: new Decimal(3141),
+        cost(){
+            if(player.X.points.gte(1)) return new Decimal(31415926)
+        else    return new Decimal(3141)},
      
         unlocked(){
             return hasUpgrade("NN", 14)&&!inChallenge('NN',11)&&!hasChallenge('NN',11)
@@ -155,8 +162,12 @@ else return new Decimal("1e450000") },
     },
     21: {
         title: "-6",
-        description: "Boost '-2' and '-4'",
-        cost: new Decimal(111111),
+        description(){
+            if(player.X.points.gte(1))   return "Boost '-2' and '-4' and Negative Number boost factor points gain."
+          else  return "Boost '-2' and '-4'"},
+        cost(){
+            if(player.X.points.gte(1)) return new Decimal(314159265)
+        else    return new Decimal(111111)},
      
         unlocked(){
             return hasUpgrade("NN", 15)&&!inChallenge('NN',11)&&!hasChallenge('NN',11)

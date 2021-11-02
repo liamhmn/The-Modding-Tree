@@ -158,12 +158,14 @@ addLayer("F", {
         888: {
             requirementDescription: "888 factors",
             effectDescription: "'Factor Alpha' is much better.",
-            done() { return player.F.points.gte(888)}
+            done() { return player.F.points.gte(888)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },
     1000: {
             requirementDescription: "1000 factors",
             effectDescription: "'Factor Beta' is better.",
-            done() { return player.F.points.gte(1000)}
+            done() { return player.F.points.gte(1000)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },
         1100: {
             requirementDescription: "1100 factors",
@@ -742,7 +744,8 @@ addLayer("F", {
         },
     
         update(diff){
-            if(hasMilestone('UF',35))   player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(player.UF.points.add(1).pow(4)).times(diff))
+            if(hasUpgrade('NN',21)) player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(player.UF.points.add(1).pow(4)).times(player.NN.points.add(1).pow(0.15)).times(diff))
+          else  if(hasMilestone('UF',35))   player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(player.UF.points.add(1).pow(4)).times(diff))
           else  if(hasMilestone('F',56))  player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(diff))
           else  if(hasUpgrade('F',101))   player.F.FP=player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(diff))
             else if(hasUpgrade('F',14))  player.F.FP= player.F.FP.add(player.F.points.pow(0.35).times(diff))
