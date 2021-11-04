@@ -116,7 +116,7 @@ else return new Decimal("1e450000") },
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasAchievement("A", 74))&&!inChallenge('NN',11)&&!hasChallenge('NN',11)
+                return (hasAchievement("A", 74))||(hasUpgrade("NN", 31)&&!inChallenge('NN',11)&&!hasChallenge('NN',11))
         },
     },
     14: {
