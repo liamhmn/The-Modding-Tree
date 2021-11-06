@@ -696,13 +696,14 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 setBuyableAmount("N", 13, getBuyableAmount("N", 13).add(1))
             },
             effect() { 
-            if (inChallenge('I',12)) eff = new Decimal("1")
-            if(hasUpgrade('F',26)) eff = new Decimal("1.79e308")
-            if(hasUpgrade('N',36)) eff = new Decimal("1e100")
+       
             let exp=new Decimal(0.5)
         if (hasUpgrade('N',41)) exp=new Decimal(0.65)
         if (player.X.points.gte(1)) exp=new Decimal(0.225)
-        eff  = new Decimal(player.N.points.add(1).log(10).pow(exp).add(1)).pow(getBuyableAmount("N", 13)).min(1e85)       
+        eff  = new Decimal(player.N.points.add(1).log(10).pow(exp).add(1)).pow(getBuyableAmount("N", 13)).min(1e85)         
+        if(hasUpgrade('N',36)) eff = new Decimal("1e100")   
+        if(hasUpgrade('F',26)) eff = new Decimal("1.79e308")
+        if (inChallenge('I',12)) eff = new Decimal("1")
         return eff               
             }
         },
