@@ -153,7 +153,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       if(hasUpgrade('F',104))mult = mult.times(1.0777)
       mult = mult.times(new Decimal(1).minus(player.X.points.times(0.05)))
       if(inChallenge("UF",211))mult = new Decimal(1)
-
+      if(inChallenge("UF",212))mult = new Decimal(1).div(mult)
         return mult
 
     },
@@ -460,8 +460,9 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1))   return "Boost Factor Point gain formula."  
               else  return "Remove the third hardcap of '3'. You can buy this upgrade while you are in Factor Challenge 11."},
             cost(){ 
-                if(player.F.activeChallenge!=42)return new Decimal(Infinity);
-                return new Decimal(1e60);
+                if(player.F.activeChallenge!=42&&!player.X.points.gte(1))return new Decimal(Infinity);
+                if(!player.X.points.gte(1))  return new Decimal(1e60);
+                return new Decimal("1e1930");
             },
             unlocked(){
                 {return hasMilestone('F',1333)&&!hasUpgrade("N", 51)}
@@ -615,6 +616,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if ( player.UF.challenges[11]>=3&&player.X.points.gte(1)) eff = new Decimal("25").pow(getBuyableAmount("N", 11))
                 if (hasMilestone('I',2)&&player.X.points.gte(1)) eff = new Decimal("200").pow(getBuyableAmount("N", 11))
                 if(hasMilestone('NN',3)&&player.X.points.gte(1)) eff = new Decimal("1e50")
+                if(hasMilestone('F',6000)&&player.X.points.gte(1)) eff = new Decimal("1e65")
                 if (inChallenge('UF',11)) eff = new Decimal("1")
                 if (inChallenge('UF',11) && hasUpgrade('N',33)) eff =  new Decimal("3").pow(getBuyableAmount("N", 11))
                 if (eff>=1e50 &&(!hasMilestone('F',6000))&&(!hasUpgrade('N',16))&&(!hasMilestone('F',12500))&&!inChallenge('I',12)) return eff = new Decimal("1e50")
@@ -679,8 +681,10 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
             unlocked() { return hasMilestone("F", 1580)},
             cost(){
             if(hasUpgrade('N',36)) return new Decimal(1e1000)
-            else if (inChallenge('UF',12)) return new Decimal("1e35").pow(getBuyableAmount("N", 13).add(1))
-            else return new Decimal("1e20").pow(getBuyableAmount("N", 13).add(1))
+            let base=new Decimal(1e20)
+            if (inChallenge('UF',12)) base=new Decimal(1e35)
+            if (player.X.points.gte(1)) base=new Decimal(1e250)
+            return base.pow(getBuyableAmount("N", 13).add(1))
             },
             canAfford() { 
                 return player.N.points.gte(tmp.N.buyables[13].cost) 
@@ -693,15 +697,13 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
             },
             effect() { 
             if (inChallenge('I',12)) eff = new Decimal("1")
-           if (hasUpgrade('N',41)&&(!hasUpgrade('N',36))&&eff<=1e85) eff  = new Decimal(player.N.points.add(1).log(10).pow(0.65).add(1)).pow(getBuyableAmount("N", 13))
-            
-         else if(!hasUpgrade('N',36)&&eff<=1e85) return eff  = new Decimal(player.N.points.add(1).log(10).pow(0.5).add(1)).pow(getBuyableAmount("N", 13))
-         else if(!hasUpgrade('F',26)&&!hasUpgrade('N',36)&&eff>=1e85) return eff = new Decimal("1e85")
-        else if(hasUpgrade('N',36)&&!hasUpgrade('F',26)) return eff = new Decimal("1e100")
-        if(hasUpgrade('F',26)) return eff = new Decimal("1.79e308")
-        return eff=eff
-
-                  
+            if(hasUpgrade('F',26)) eff = new Decimal("1.79e308")
+            if(hasUpgrade('N',36)) eff = new Decimal("1e100")
+            let exp=new Decimal(0.5)
+        if (hasUpgrade('N',41)) exp=new Decimal(0.65)
+        if (player.X.points.gte(1)) exp=new Decimal(0.225)
+        eff  = new Decimal(player.N.points.add(1).log(10).pow(exp).add(1)).pow(getBuyableAmount("N", 13)).min(1e85)       
+        return eff               
             }
         },
         21: {
@@ -802,7 +804,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
 passiveGeneration(){return hasMilestone('F',5) && (!inChallenge('F',22)) && (!inChallenge('F',23)) && (!inChallenge('F',42)&& (!inChallenge('F',43)||player.X.points.gte(1)))? 1 : 0},
 automateStuff(){
     if(hasMilestone("I",69)||hasChallenge("F",24)){
-        
+        if(layers.N.buyables[13].canAfford()&&player.X.points.gte(1)&&hasMilestone("F",1580))setBuyableAmount("N",13,player.N.points.log(1e250).floor())   
       if(layers.N.buyables[22].canAfford()&&hasChallenge("F",24))setBuyableAmount("N",22,player.N.points.log(1.79e308).floor())
       else if(layers.N.buyables[22].canAfford())setBuyableAmount("N",22,player.N.points.log("1e1000").floor())
       

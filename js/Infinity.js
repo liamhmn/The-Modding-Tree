@@ -15,6 +15,7 @@ addLayer("I", {
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     base(){ 
         if(inChallenge('E',31))return new Decimal("eeeeeeeeee10")
+        if(player.I.points.gte(6)&&player.X.points.gte(1))return new Decimal("eeeeeeeee10")
        else return new Decimal("1.8e308")},
     exponent: 1,
     branches:["F","UF"],

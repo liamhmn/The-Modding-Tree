@@ -6,6 +6,7 @@ addLayer("F", {
         unlocked: true,
 		points: new Decimal(0),
         FP: new Decimal(0),
+        FPgain:new Decimal(0)
     }},
     color: "#FFCD00",
     requires(){
@@ -174,18 +175,24 @@ addLayer("F", {
         },  
         1333: {
             requirementDescription: "1333 factors",
-            effectDescription: "Unlock another number upgrade",
+            effectDescription: "Unlock another number upgrade.",
             done() { return player.F.points.gte(1333)}
         },     
         1580: {
             requirementDescription: "1580 factors",
-            effectDescription: "Unlock a number buyable",
+            effectDescription() {
+                if(player.X.points.gte(1))    return "Unlock a number buyable and auto buy it."
+                else  return "Unlock a number buyable."},
             done() { return player.F.points.gte(1580)}
         },  
         6000: {
-            requirementDescription: "6000 factors",
-            effectDescription: "Remove the first hardcap of '+', auto buy Factors, and Factors resets nothing",
-            done() { return player.F.points.gte(6000)||(hasMilestone("I", 1)&&!player.X.points.gte(1))||hasMilestone("MS", 2)}
+            requirementDescription() {
+                if(player.X.points.gte(1))    return "1700 factors"
+                else  return "6000 factors"},       
+            effectDescription() {
+                if(player.X.points.gte(1))    return "Boost '+', auto buy Factors, and Factors resets nothing"
+                else  return "Remove the first hardcap of '+', auto buy Factors, and Factors resets nothing."},       
+            done() { return (player.F.points.gte(6000)||(player.F.points.gte(1700)&&player.X.points.gte(1)))||(hasMilestone("I", 1)&&!player.X.points.gte(1))||hasMilestone("MS", 2)}
         },  
         12500: {
             requirementDescription: "12500 factors",
@@ -753,11 +760,18 @@ addLayer("F", {
         },
     
         update(diff){
-            if(hasUpgrade('NN',21)) player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(player.UF.points.add(1).pow(4)).times(player.NN.points.add(1).pow(0.15)).times(diff))
-          else  if(hasMilestone('UF',35))   player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(player.UF.points.add(1).pow(4)).times(diff))
-          else  if(hasMilestone('F',56))  player.F.FP= player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(upgradeEffect('F',11)).times(diff))
-          else  if(hasUpgrade('F',101))   player.F.FP=player.F.FP.add(player.F.points.pow(0.5).times(player.N.points.add(10).log(10).pow(2)).times(diff))
-            else if(hasUpgrade('F',14))  player.F.FP= player.F.FP.add(player.F.points.pow(0.35).times(diff))
+            let gain=new Decimal(0)
+            let exp=new Decimal(0.35)
+            if(hasUpgrade('F',101)) exp=new Decimal(0.5)
+            if(hasUpgrade('N',35)) exp=new Decimal(8)
+            if(hasUpgrade('F',14)) gain=gain.add(player.F.points.pow(exp))      
+            if(hasUpgrade('F',101)) gain=gain.times(player.N.points.add(10).log(10).pow(2))
+            if(hasMilestone('F',56)) gain=gain.times(upgradeEffect('F',11))
+            if(hasMilestone('UF',35)) gain=gain.times(player.UF.points.add(1).pow(4))
+            if(hasUpgrade("NN",21))gain=gain.times(player.NN.points.add(1).pow(0.15))
+            player.FPgain=gain
+           player.F.FP= player.F.FP.add(player.FPgain.times(diff))
+
         },
     tabFormat: {
         "Milestones":{
@@ -825,6 +839,7 @@ addLayer("F", {
             let s = ""
             if(hasUpgrade('F',103))  s+="You have " + format(player.F.FP) + " Factor point, which make factor cost base ^" + format(new Decimal(1).div(player.F.FP.add(10).log(2).pow(0.15)))+"<br>" 
            else s+="You have " + format(player.F.FP) + " Factor point, which make factor cost base ^" + format(new Decimal(1).div(player.F.FP.add(10).log(10).pow(0.1)))+"<br>" 
+           s+="You are gaining "+ format(player.FPgain)+" Factor Point per second."
             return s
           }],
           "blank",

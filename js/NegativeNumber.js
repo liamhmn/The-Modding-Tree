@@ -271,12 +271,14 @@ else return new Decimal("1e450000") },
         4e21: {
             requirementDescription: "4e21 Negative number",
             effectDescription: "Unlock the first infinity challenge",
-            done() { return player.NN.points.gte(4e21) }
+            done() { return player.NN.points.gte(4e21)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },
         1e28: {
             requirementDescription: "1e28 Negative number",
             effectDescription: "Unlock the third factor buyable",
-            done() { return player.NN.points.gte(1e28) }
+            done() { return player.NN.points.gte(1e28)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },
         1e50: {
             requirementDescription: "'-4' effect >= 1e48",

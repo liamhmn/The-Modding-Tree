@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1.8",
+	num: "0.3.1.9",
 	name: "AGAIN",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.3.1.9</h3><br>
+- Rewrite 3 upgrade after 1 ???<br>
+- Rewrite 3 buyable after 1 ???<br>
+- Add 1 UF challenge<br>
+- Add 1 F challenge<br>
+- Endgame: Complete Upgrader Delta and 1 ???.<br>
 <h3>v0.3.1.8</h3><br>
 - Rewrite 4 upgrade after 1 ???<br>
 - Add 3 Achievements<br>
@@ -409,7 +415,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	function(){	
 		let s=""
-		if (player.X.best.gte(1)&&hasChallenge("UF",211))  s+= "Congratulations, You reach the endgame."
+		if (isEndgame())  s+= "Congratulations, You reach the endgame."
 		else if (player.X.best.gte(1))  s+= "You have 0 layers left to unlock."					
 		else if (player.S.best.gte(1))  s+= "You have 1 layer left to unlock.<br> Next layer at '1.798F308' upgrade (Just a upgrade name)."
 		else if (player.M.best.gte(1)&&player.O.best.gte(1))  s+="You have 2 layers left to unlock.<br> Next layer at 1.80e308 Infinity."
@@ -430,7 +436,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.X.best.gte(1)&&hasChallenge("UF",211)
+	return player.X.best.gte(1)&&hasChallenge("UF",212)
 }
 
 

@@ -440,6 +440,21 @@ rewardDescription(){return "Unlock a Factor Challenge."},
       setBuyableAmount('N',21,new Decimal(0))
     },
 },
+212: {  
+    name: "Upgrader delta",
+    challengeDescription: "All upgrade that exponentiated Number gain are reversed.",
+    canComplete(){return player.N.points.gte(new Decimal("1e720").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
+        goalDescription(){return format(new Decimal("1e720").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
+rewardDescription(){return "Unlock master upgrade (In Number layer) (Not yet)."},
+  unlocked(){return player.UF.canupd&&player.UF.page==2},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
 },
 buyables: {
 
@@ -1201,8 +1216,8 @@ clickables:{
         }
     },
     212:{
-        display() {return "Explore A New Challenge.<br>Req: Gain 1e1024 Number in no factor factor."},
-        canClick(){return player.N.points.gte("1e1024")&&inChallenge('F',22)},
+        display() {return "Explore A New Challenge.<br>Req: Gain 1e1290 Number in Upgrader 1."},
+        canClick(){return player.N.points.gte("1e1290")&&inChallenge('UF',101)},
         onClick(){
          
             player.UF.canupd=true
