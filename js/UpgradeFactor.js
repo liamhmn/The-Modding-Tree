@@ -427,10 +427,10 @@ rewardDescription(){return "Factor beta is greater."},
 },
 211: {  
     name: "Upgrader gamma",
-    challengeDescription: "All upgrade that multiple Number gain are disabled.",
+    challengeDescription: "All upgrade that multiple and exponentiated Number gain are disabled.",
     canComplete(){return player.N.points.gte(new Decimal("1e309").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
         goalDescription(){return format(new Decimal("1e309").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
-rewardDescription(){return "Unlock a Factor Challenge. (not yet)"},
+rewardDescription(){return "Unlock a Factor Challenge."},
   unlocked(){return player.UF.canupg&&player.UF.page==2},
   onEnter(){
       player.N.points=new  Decimal(0)

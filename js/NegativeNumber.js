@@ -83,6 +83,8 @@ else return new Decimal("1e450000") },
                 if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
                 if(inChallenge('IP',32))return new Decimal("1")
                 if(inChallenge('IP',22))return new Decimal("1")
+                if(player.X.points.gte(1)&&hasUpgrade('NN',23)) return player.NN.points.pow(9.87654321).add(1).min("1e555")
+                if(player.X.points.gte(1)&&hasUpgrade('NN',22)) return player.NN.points.pow(6.9420).add(1)
                 if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(5).add(1)
                 if(player.X.points.gte(1))return player.NN.points.add(1).pow(3.1415926)
                 else if(hasUpgrade('IP',22)) return player.NN.points.add(1).pow(5).min("1e5000")
@@ -126,6 +128,7 @@ else return new Decimal("1e450000") },
             if(player.X.points.gte(1)) return new Decimal(31415)
         else    return new Decimal(15)},
         effect() {
+            if(player.X.points.gte(1)&&hasUpgrade('NN',22)) return player.NN.points.pow(0.45).add(1).min(1e12)
             if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(0.4).add(1).min(1e12)
             if(player.X.points.gte(1)) return player.NN.points.pow(0.375).add(1).min(1e5)
             if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
@@ -176,16 +179,20 @@ else return new Decimal("1e450000") },
     22: {
         title: "-7",
         description: "Boost '-2' and '-4'",
-        cost: new Decimal(4.20e9),
+        cost(){
+            if(player.X.points.gte(1)) return new Decimal(1e18)
+        else    return new Decimal(4.2e9)},
      
         unlocked(){
-            return hasUpgrade("N", 51)&&!inChallenge('NN',11)&&!hasChallenge('NN',11)
+            return (hasUpgrade("NN", 21)&&player.X.points.gte(1))||(hasUpgrade("N", 51)&&!inChallenge('NN',11)&&!hasChallenge('NN',11))
         },
     },
     23: {
         title: "-8",
         description: "Boost '-2'",
-        cost: new Decimal(1e18),
+        cost(){
+            if(player.X.points.gte(1)) return new Decimal(1e21)
+        else    return new Decimal(1e18)},
      
         unlocked(){
             return hasUpgrade("NN", 22)&&!inChallenge('NN',11)&&!hasChallenge('NN',11)

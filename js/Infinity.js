@@ -184,7 +184,7 @@ addLayer("I", {
                     if(hasChallenge('I',51)) return "Number ^1.1"
                     else return "??????"
                 },
-              unlocked(){return hasUpgrade('IP',45)},
+              unlocked(){return hasUpgrade('IP',45)||(hasMilestone('NN',4e21)&&player.X.points.gte(1))},
               onEnter(){player.N.points=new Decimal(0)
                 player.F.points=new Decimal(0)
                 player.UF.points=new Decimal(0)
@@ -205,7 +205,7 @@ addLayer("I", {
                     player.F.points=new Decimal(0)
                     player.UF.points=new Decimal(0)
                     player.NN.points=new Decimal(0)},
-              unlocked(){return hasUpgrade('IP',45)},
+              unlocked(){return hasUpgrade('IP',45)||(hasMilestone('NN',4e21)&&player.X.points.gte(1))},
             },
     
             61: {
@@ -265,7 +265,7 @@ addLayer("I", {
           ]},
       
       "Normal Challenges":{
-        unlocked(){return hasMilestone('NN',4e21)},
+        unlocked(){return hasMilestone('NN',4e21)&&!player.X.points.gte(1)},
         content:[
           "main-display",
           "blank",
@@ -278,7 +278,7 @@ addLayer("I", {
         
     
     "Boost or nerf":{
-        unlocked(){return hasUpgrade('IP',45)},
+        unlocked(){return hasUpgrade('IP',45)||(hasMilestone('NN',4e21)&&player.X.points.gte(1))},
         content:[
           "main-display",
           "blank",

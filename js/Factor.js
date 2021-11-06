@@ -590,6 +590,15 @@ addLayer("F", {
           unlocked(){return hasMilestone('F', 44)},
           
         },
+        24: {
+            name: "Reverse",
+            challengeDescription: "All upgrades which boost Number gain effect is divide instead of multiple. However, upgrades effect ^0.5.",
+            canComplete(){return player.N.points.gte("1e96")},
+            goalDescription: "1e96 Numbers",
+            rewardDescription(){return "^ cost base is 1.79e308 and auto buy it."},
+          unlocked(){return hasChallenge("UF",211)&&player.X.points.gte(1)},
+          
+        },
         31: {
             name: "Super / factor",
             challengeDescription: "Points and Numbers / 1e6",

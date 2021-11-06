@@ -65,6 +65,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
 
     if(hasUpgrade('F',102))mult = mult.times(player.F.FP.add(1))
     if(inChallenge("UF",211))mult = new Decimal(1)
+    if(inChallenge("F",24))mult = new Decimal(1).div(mult.pow(0.5))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -152,6 +153,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       if(hasUpgrade('F',104))mult = mult.times(1.0777)
       mult = mult.times(new Decimal(1).minus(player.X.points.times(0.05)))
       if(inChallenge("UF",211))mult = new Decimal(1)
+
         return mult
 
     },
@@ -454,7 +456,9 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         },
         35: {
             title: "15",
-            description: "Remove the third hardcap of '3'. You can buy this upgrade while you are in Factor Challenge 11.",
+            description(){
+                if(player.X.points.gte(1))   return "Boost Factor Point gain formula."  
+              else  return "Remove the third hardcap of '3'. You can buy this upgrade while you are in Factor Challenge 11."},
             cost(){ 
                 if(player.F.activeChallenge!=42)return new Decimal(Infinity);
                 return new Decimal(1e60);
@@ -670,25 +674,25 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         13: {
             title: "x",
             display() {
-                if(hasUpgrade('N',36)) return "Boosts numbers gain by " + format(tmp.N.buyables[13].effect) + "x<br>Cost : " + " Infinity Numbers"
-                else if (inChallenge('UF',12)) return "Boosts numbers gain by " + format(tmp.N.buyables[13].effect) + "x<br>Cost : " + format(new Decimal("1e35").pow(getBuyableAmount("N", 13).add(1))) + " Numbers"
-              else return "Boosts numbers gain by " + format(tmp.N.buyables[13].effect) + "x<br>Cost : " + format(new Decimal("1e20").pow(getBuyableAmount("N", 13).add(1))) + " Numbers"
+                return "Boosts numbers gain by " + format(tmp.N.buyables[13].effect) + "x<br>Cost : " + format(tmp.N.buyables[13].cost) + " Numbers"
             },
             unlocked() { return hasMilestone("F", 1580)},
+            cost(){
+            if(hasUpgrade('N',36)) return new Decimal(1e1000)
+            else if (inChallenge('UF',12)) return new Decimal("1e35").pow(getBuyableAmount("N", 13).add(1))
+            else return new Decimal("1e20").pow(getBuyableAmount("N", 13).add(1))
+            },
             canAfford() { 
-                if(hasUpgrade('N',36)) return player.N.points.gte(new Decimal(1e1000))
-                else if (inChallenge('UF',12)) return player.N.points.gte(new Decimal("1e35").pow(getBuyableAmount("N", 13).add(1))) 
-               else return player.N.points.gte(new Decimal("1e20").pow(getBuyableAmount("N", 13).add(1))) 
+                return player.N.points.gte(tmp.N.buyables[13].cost) 
             },
             buy() { 
                 {
-                    if (inChallenge('UF',12)) player.N.points = player.N.points.minus(new Decimal("1e35").pow(getBuyableAmount("N", 13).add(1)))
-                 else player.N.points = player.N.points.minus(new Decimal("1e20").pow(getBuyableAmount("N", 13).add(1)))
+                    player.N.points = player.N.points.minus(tmp.N.buyables[13].cost)
                 }
                 setBuyableAmount("N", 13, getBuyableAmount("N", 13).add(1))
             },
             effect() { 
-                if (inChallenge('I',12)) eff = new Decimal("1")
+            if (inChallenge('I',12)) eff = new Decimal("1")
            if (hasUpgrade('N',41)&&(!hasUpgrade('N',36))&&eff<=1e85) eff  = new Decimal(player.N.points.add(1).log(10).pow(0.65).add(1)).pow(getBuyableAmount("N", 13))
             
          else if(!hasUpgrade('N',36)&&eff<=1e85) return eff  = new Decimal(player.N.points.add(1).log(10).pow(0.5).add(1)).pow(getBuyableAmount("N", 13))
@@ -739,15 +743,19 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         22: {
             title: "^",
             display() {
-               return "Boost negative numbers gain by " + format(tmp.N.buyables[22].effect) + "x<br>Cost : " + format(new Decimal("1e1000").pow(getBuyableAmount("N", 22).add(1))) + " Numbers"
+               return "Boost negative numbers gain by " + format(tmp.N.buyables[22].effect) + "x<br>Cost : " + format(tmp.N.buyables[22].cost) + " Numbers"
             },
             unlocked() { return hasAchievement("A", 41) },
+            cost(){
+                if(hasChallenge("F",24)) return new Decimal(1.79e308).pow(getBuyableAmount("N", 22).add(1))
+            else return new Decimal("1e1000").pow(getBuyableAmount("N", 22).add(1))
+            },
             canAfford() { 
-                return player.N.points.gte(new Decimal("1e1000").pow(getBuyableAmount("N", 22).add(1))) 
+              return player.N.points.gte(tmp.N.buyables[22].cost) 
             },
             buy() { 
                 {
-                  player.N.points = player.N.points.minus(new Decimal("1e1000").pow(getBuyableAmount("N", 22).add(1)))
+               player.N.points = player.N.points.minus(tmp.N.buyables[22].cost)
                 }
                 setBuyableAmount("N", 22, getBuyableAmount("N", 22).add(1))
             },
@@ -793,8 +801,10 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       },
 passiveGeneration(){return hasMilestone('F',5) && (!inChallenge('F',22)) && (!inChallenge('F',23)) && (!inChallenge('F',42)&& (!inChallenge('F',43)||player.X.points.gte(1)))? 1 : 0},
 automateStuff(){
-    if(hasMilestone("I",69)){
-      if(layers.N.buyables[22].canAfford())setBuyableAmount("N",22,player.N.points.log("1e1000").floor())
+    if(hasMilestone("I",69)||hasChallenge("F",24)){
+        
+      if(layers.N.buyables[22].canAfford()&&hasChallenge("F",24))setBuyableAmount("N",22,player.N.points.log(1.79e308).floor())
+      else if(layers.N.buyables[22].canAfford())setBuyableAmount("N",22,player.N.points.log("1e1000").floor())
       
     }
 },
