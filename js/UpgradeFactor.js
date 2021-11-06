@@ -1119,8 +1119,8 @@ clickables:{
         }
     },
     112:{
-        display() {return "Explore A New Challenge.<br>Req: Reach 1e214 Numbers in No factor factor."},
-        canClick(){return  player.N.points.gte("1e214")&&inChallenge('F',22)},
+        display() {return "Explore A New Challenge.<br>Req: Reach 1e314 Numbers in No factor factor."},
+        canClick(){return  player.N.points.gte("1e314")&&inChallenge('F',22)},
         onClick(){
          
             player.UF.canup4=new Decimal(1) 
