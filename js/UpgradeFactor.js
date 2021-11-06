@@ -1119,13 +1119,13 @@ clickables:{
         }
     },
     112:{
-        display() {return "Explore A New Challenge.<br>Req: Reach 1e314 Numbers in No factor factor."},
-        canClick(){return hasUpgrade('N',34)&&inChallenge('F',22)&&player.UF.page==1},
+        display() {return "Explore A New Challenge.<br>Req: Reach 1e214 Numbers in No factor factor."},
+        canClick(){return  player.N.points.gte("1e214")&&inChallenge('F',22)},
         onClick(){
          
             player.UF.canup4=new Decimal(1) 
         },
-        unlocked(){return hasMilestone('F',240)&&!player.UF.canup4.gte(1)},
+        unlocked(){return hasUpgrade('N',34)&&!player.UF.canup4.gte(1)&&player.UF.page==1},
         style() { return {
             "font-size": "15px",
             "height": "300px",
