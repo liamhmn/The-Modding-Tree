@@ -320,6 +320,39 @@ addLayer("Link", {
 	tooltip: "Link",
     tabFormat: [
 		"blank", "blank", "blank",
-        ["raw-html", "<h1><a href=https://docs.google.com/document/d/1oT5siVj4lT8nnmHjPmAiSQL1NVSmNXQT8bpgUUqjBkM/edit target=_blank>Hardcap table</a></h1><br><h1><a href=https://docs.google.com/document/d/1Re0J_14Ivl_ON4CyqXWk-6nwZnxFfzoG3rxbQqe4Tgg/edit target=_blank>Save bank</a></h1><br><h1><a href=https://docs.google.com/document/d/1IR_xE_WCKgdGjd0J7FDXwhbaxMg79OyvEkslYGkCK74/edit target=_blank>Guide</a></h1>"],
+        ["raw-html", "<h1><a href=https://docs.google.com/document/d/1Re0J_14Ivl_ON4CyqXWk-6nwZnxFfzoG3rxbQqe4Tgg/edit target=_blank>Save bank</a></h1><br><h1><a href=https://docs.google.com/document/d/1IR_xE_WCKgdGjd0J7FDXwhbaxMg79OyvEkslYGkCK74/edit target=_blank>Guide</a></h1>"],
 	],
+})
+
+addLayer("T", {
+	startData() { return {
+    unlocked: true,
+    time:new Decimal(0),
+    time2:"",
+  timed:new Decimal(0),
+  timeh:new Decimal(0),
+  timem:new Decimal(0),
+  times:new Decimal(0),
+  }},
+	color: "#8888ff",
+	symbol: "T",
+	row: "side",
+	position: 10,
+	layerShown() { return true },
+	tooltip(){return "Time"},
+    tabFormat: [
+		"blank", "blank", "blank",
+    ["display-text",function(){
+      let s = "Time played (real time): "+player.T.time2
+      return s
+    }],
+	],
+  update(diff){
+    player.T.time=player.T.time.add(new Decimal(1).times(diff))
+    player.T.timed=player.T.time.div(86400).floor()
+    player.T.timeh=player.T.time.sub(player.T.timed.times(86400)).div(3600).floor()
+    player.T.timem=player.T.time.sub(player.T.timed.times(86400)).sub(player.T.timeh.times(3600)).div(60).floor()
+    player.T.times=player.T.time.sub(player.T.timed.times(86400)).sub(player.T.timeh.times(3600)).sub(player.T.timem.times(60)).floor()
+    player.T.time2=player.T.timed+"d "+player.T.timeh+"h "+player.T.timem+"m "+player.T.times+"s"
+  }
 })
