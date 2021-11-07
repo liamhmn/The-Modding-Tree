@@ -348,7 +348,7 @@ addLayer("T", {
     }],
 	],
   update(diff){
-    player.T.time=player.T.time.add(new Decimal(1).times(diff))
+    player.T.time=player.T.time.add(new Decimal(0.05))
     player.T.timed=player.T.time.div(86400).floor()
     player.T.timeh=player.T.time.sub(player.T.timed.times(86400)).div(3600).floor()
     player.T.timem=player.T.time.sub(player.T.timed.times(86400)).sub(player.T.timeh.times(3600)).div(60).floor()
