@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1.9",
+	num: "0.3.1.10",
 	name: "AGAIN",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.3.1.10</h3><br>
+- Nothing here because I am lazy.<br>
+- Endgame: Complete meta upgrader+ and 1 ???.<br>
 <h3>v0.3.1.9</h3><br>
 - Rewrite 3 upgrade after 1 ???<br>
 - Rewrite 3 buyable after 1 ???<br>
@@ -357,13 +360,13 @@ function getPointGen() {
 	if (hasChallenge('F', 11)) gain = gain.times(3)
 	if (hasUpgrade('N', 11)&&(!hasUpgrade('UF',11))&&(!inChallenge('UF',101))) gain = gain.times(4)
 	if (hasAchievement("A", 11)) gain = gain.times(1.25)
-	if (hasUpgrade('N', 12)&&!inChallenge('UF',102)) gain = gain.times(upgradeEffect('N', 12))
+	if (hasUpgrade('N', 12)&&!inChallenge('UF',102)&&(!inChallenge("UF",221)||player.N.m2)) gain = gain.times(upgradeEffect('N', 12))
 	if(inChallenge('UF',102)) gain = gain.div(upgradeEffect('N', 12))
 	if (hasUpgrade('UF', 12)) gain = gain.times(upgradeEffect('UF', 12))
 	if (hasUpgrade('UF', 13)) gain = gain.times(upgradeEffect('UF', 13))
 	if (hasUpgrade('NN', 12)) gain = gain.times(upgradeEffect('NN', 12))
 	if (hasUpgrade('NN', 13)) gain = gain.times(upgradeEffect('NN', 13))
-	if (hasUpgrade('N', 13)&&!inChallenge('UF',111)) gain = gain.times(upgradeEffect('N', 13))
+	if (hasUpgrade('N', 13)&&!inChallenge('UF',111)&&(!inChallenge("UF",221)||player.N.m3)) gain = gain.times(upgradeEffect('N', 13))
 	if(inChallenge('UF',111)) gain = gain.div(upgradeEffect('N', 13))
 	if (hasMilestone('F', 1)) gain = gain.times(player.F.points.add(1))
 	if (hasMilestone('MS', 3)&&(!player.IP.points.gte("e1.5e13"))) gain = gain.times(player.IP.points.add(1))
@@ -373,7 +376,7 @@ function getPointGen() {
 	if (hasMilestone('UF', 35)) gain = gain.times(player.UF.points.pow(8).add(1))
 	if (hasMilestone('UF', 52)) gain = gain.times(player.UF.points.pow(3).add(1))
 	if (hasMilestone('UF', 128)) gain = gain.times(player.UF.points.pow(3).add(1))
-	
+	if(player.X.points.gte(1)&&hasMilestone('UF', 128)) gain = gain.times(player.UF.points.pow(7).add(1))
 	if (hasMilestone('F', 1100)) gain = gain.times(player.F.points.add(1))
 	if (hasMilestone('UF', 10)) gain = gain.times(10000)
 	if (hasMilestone('I', 1)) gain = gain.times(100)
@@ -391,7 +394,8 @@ function getPointGenExp(){
 	if (hasUpgrade("MS", 32)) exp = exp.times(3)
 	if (hasUpgrade("MS", 31)) exp = exp.times(2)
 	if(hasUpgrade('UF',11)) exp = exp.times(4)
-	if(hasChallenge('UF',101)&&player.X.points.gte(1)) exp = exp.times(1.14)
+	if(player.X.points.gte(1)&&player.N.m1)exp = exp.times(1.2)
+else	if(hasChallenge('UF',101)&&player.X.points.gte(1)&&!inChallenge("UF",221)) exp = exp.times(1.14)
 	if(hasUpgrade('UF',25)) exp = exp.times(upgradeEffect('UF',25))
 	if(hasMilestone('E',1e287)) exp = exp.times(upgradeEffect('UF',24))
 	if(inChallenge('E',11)) exp = exp.times(player.E.Ppower)
@@ -436,7 +440,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.X.best.gte(1)&&hasChallenge("UF",212)
+	return player.X.best.gte(1)&&hasChallenge("UF",222)
 }
 
 

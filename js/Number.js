@@ -6,6 +6,12 @@ addLayer("N", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        m1:false,
+        m2:false,
+        m3:false,
+        m4:false,
+        mt:new Decimal(0),
+ma:new Decimal(1)
     }},
     color: "#4BDC13",
     requires(){
@@ -41,7 +47,7 @@ addLayer("N", {
         if (inChallenge('F', 13)) mult = mult.times(0.3)
         if (hasChallenge('F', 12)) mult = mult.times(3)
         if (hasAchievement("A", 33)) mult = mult.times(5)
-       if (hasUpgrade('N',14)&&!inChallenge('UF',112)) mult = mult.times(upgradeEffect('N', 14))
+       if (hasUpgrade('N',14)&&!inChallenge('UF',112)&&(!inChallenge("UF",221)||player.N.m4)) mult = mult.times(upgradeEffect('N', 14))
        if(inChallenge('UF',112))mult = mult.div(upgradeEffect('N', 14))
        if (hasUpgrade('UF',14)) mult = mult.times(upgradeEffect('UF', 14))
        if (hasUpgrade('UF',21)) mult = mult.times(upgradeEffect('UF', 21))
@@ -84,6 +90,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         if (inChallenge('I',61)) mult = mult.times(0.6)
         if (inChallenge('I',62)) mult = mult.times(0.1)
         if (inChallenge('UF',122)) mult = mult.times(0.1)
+        if (inChallenge('UF',222)) mult = mult.times(0.01)
         if (inChallenge('NN',11)) mult = mult.times(0.234)
         if (inChallenge('NN',12)) mult = mult.times(0.123)
         if (inChallenge('NN',21)) mult = mult.times(0.012)
@@ -182,6 +189,10 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         if (hasChallenge("F", 21)||hasUpgrade("N", 24)||hasMilestone('I',1)&& resettingLayer=="F") keep.push("upgrades")
         if (hasMilestone("UF", 1) && resettingLayer=="UF")  keep.push("upgrades")
         if (hasMilestone("IP", 1) && resettingLayer=="IP")  keep.push("upgrades")
+        keep.push("m1")
+        keep.push("m2")
+        keep.push("m3")
+        keep.push("m4")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
         for(i in extraUpgrades) {
             if (!player[this.layer].upgrades.includes(extraUpgrades[i])) {
@@ -193,6 +204,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         11: {
             title: "1",
             description(){ 
+                if(player.X.points.gte(1)&&player.N.m1) return "Raise point gain to 1.2."
                 if(hasChallenge('UF',101)) return "Raise point gain to 1.14."
                 if(hasUpgrade('UF',11)&&challengeCompletions('UF',21)>=1)  return "Raise point gain to 40."
                 if(hasUpgrade('UF',11))  return "Raise point gain to 4."
@@ -208,6 +220,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(2e6)
             else    return new Decimal(5)},
             effect() {
+                if(player.X.points.gte(1)&&player.N.m2) return 1e150
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122)) return new Decimal("1e75")
                 if(hasChallenge('UF',102)) return player.N.points.tetrate(0.4).pow(0.5).add(1).min(1e65)
@@ -240,6 +253,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
             else    return new Decimal(20)},
           
             effect() {
+                if(player.X.points.gte(1)&&player.N.m3) return 1e175
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e105
                 if(hasChallenge('UF',122))return new Decimal("1e100")
                 if(hasChallenge('UF',111))  return player.points.tetrate(0.55).add(1).min(1e100)
@@ -270,6 +284,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(5e7)
             else    return new Decimal(60)},
             effect() {
+                if(player.X.points.gte(1)&&player.N.m4) return 1e110
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122))return new Decimal("1e75")
                 if (player.N.points.gte("1e130")&&player.X.points.gte(1)&&hasChallenge('UF',112))return new Decimal("1e65")
@@ -774,6 +789,61 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
     
        
     },
+    clickables:{
+        11:{
+            display() {
+                return "Master '1'. Currenty: "+player.N.m1},
+
+            canClick(){return player.N.m1||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},
+            onClick(){
+                player.N.m1=!player.N.m1
+              },
+            unlocked(){return hasChallenge("UF",212)},
+            },
+            12:{
+                display() {
+                    return "Master '2'. Currenty: "+player.N.m2},
+    
+                canClick(){return player.N.m2||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},
+                onClick(){
+                    player.N.m2=!player.N.m2
+                  },
+                unlocked(){return hasChallenge("UF",212)},
+                },
+                13:{
+                    display() {
+                        return "Master '3'. Currenty: "+player.N.m3},
+        
+                    canClick(){return player.N.m3||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},
+                    onClick(){
+                        player.N.m3=!player.N.m3
+                      },
+                    unlocked(){return hasChallenge("UF",212)},
+                    },
+                    14:{
+                        display() {
+                            return "Master '4'. Currenty: "+player.N.m4},
+            
+                        canClick(){return player.N.m4||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},
+                        onClick(){
+                            player.N.m4=!player.N.m4
+                          },
+                        unlocked(){return hasChallenge("UF",212)},
+                        },
+        },
+        mt(){
+            let mt=new Decimal(0)
+            if(player.N.m1) mt=mt.add(1)
+            if(player.N.m2) mt=mt.add(1)
+            if(player.N.m3) mt=mt.add(1)
+            if(player.N.m4) mt=mt.add(1)
+            let ma=new Decimal(1)
+            if(hasChallenge("UF",221)) ma++
+player.N.ma=ma
+            return mt
+  
+        },
+
     tabFormat: {
       
       "Upgrades":{
@@ -787,6 +857,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
           "blank",
           "blank",
           "upgrades",
+          "clickables",
         ]
       },
 

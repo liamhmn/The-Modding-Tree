@@ -14,8 +14,7 @@ addLayer("I", {
     baseAmount() {return player.N.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     base(){ 
-        if(inChallenge('E',31))return new Decimal("eeeeeeeeee10")
-        if(player.I.points.gte(6)&&player.X.points.gte(1))return new Decimal("eeeeeeeee10")
+        if(inChallenge('E',31))return new Decimal("eeeeeeeeee10") 
        else return new Decimal("1.8e308")},
     exponent: 1,
     branches:["F","UF"],
@@ -279,7 +278,7 @@ addLayer("I", {
         
     
     "Boost or nerf":{
-        unlocked(){return hasUpgrade('IP',45)||(hasMilestone('NN',4e21)&&player.X.points.gte(1))},
+        unlocked(){return hasUpgrade('IP',45)},
         content:[
           "main-display",
           "blank",

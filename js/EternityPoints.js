@@ -560,7 +560,7 @@ unlocked(){return hasMilestone('E',1e286)},
    
         },
         23: {
-            title: "True inflte",
+            title: "True inflate",
             description: "Unlock 3 tab in MS.",
             cost: new Decimal("ee30"),
           unlocked(){return player.E.meta.gte(1)},

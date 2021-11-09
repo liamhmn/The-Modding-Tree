@@ -19,6 +19,8 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
        canupb: new Decimal(0),
        canupg: false,
        canupd: false,
+       canupe: false,
+       canupm: false,
        page: new Decimal(1),   
      CP: new Decimal(0),
      CPgain: new Decimal(0),
@@ -107,6 +109,9 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
         if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canup6")
         if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canupa")
         if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canupb")
+        if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canupg")
+        if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canupd")
+        if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("canupe")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     milestones: {
@@ -176,7 +181,10 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
         },
         128: {
             requirementDescription: "128 Upgrade Factor",
-            effectDescription: "Unlock 2 Number upgrades and boost the eighth milestone.",
+            effectDescription(){
+                if(player.X.points.gte(1)) return"Boost the eighth milestone."
+                return"Unlock 2 Number upgrades and boost the eighth milestone."},
+            
             done() { return player.UF.points.gte(128) }
             ,unlocked(){ return (!hasUpgrade('UF',32))}
         },
@@ -445,8 +453,38 @@ rewardDescription(){return "Unlock a Factor Challenge."},
     challengeDescription: "All upgrade that exponentiated Number gain are reversed.",
     canComplete(){return player.N.points.gte(new Decimal("1e720").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
         goalDescription(){return format(new Decimal("1e720").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
-rewardDescription(){return "Unlock master upgrade (In Number layer) (Not yet)."},
+rewardDescription(){return "Unlock master upgrade (In Number layer)."},
   unlocked(){return player.UF.canupd&&player.UF.page==2},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
+221: {  
+    name: "Upgrader epsilon",
+    challengeDescription: "All non mastered Number upgrades have no effect.",
+    canComplete(){return player.N.points.gte(new Decimal("1e2750").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
+        goalDescription(){return format(new Decimal("1e2750").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
+rewardDescription(){return "You can mastered 1 more upgrade."},
+  unlocked(){return player.UF.canupe&&player.UF.page==2},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
+222: {  
+    name: "meta upgrader+",
+    challengeDescription: "Number ^0.01",
+    canComplete(){return player.N.points.gte(new Decimal("1e42").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
+        goalDescription(){return format(new Decimal("1e42").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
+rewardDescription(){return "Unlock upgrade point (not yet)."},
+  unlocked(){return player.UF.canupm&&player.UF.page==2},
   onEnter(){
       player.N.points=new  Decimal(0)
       player.points=new  Decimal(0)
@@ -1231,6 +1269,38 @@ clickables:{
         
         }
     },
+    221:{
+        display() {return "Explore A New Challenge.<br>Req: Gain 1e160 Number in meta upgrader."},
+        canClick(){return player.N.points.gte("1e160")&&inChallenge('UF',122)},
+        onClick(){
+         
+            player.UF.canupe=true
+        },
+        unlocked(){return hasMilestone('I',5)&&!player.UF.canupe&&player.UF.page==2},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },  
+    222:{
+        display() {return "Explore A New Challenge.<br>Req: Gain 1.8e308 Number in meta upgrader."},
+        canClick(){return player.N.points.gte("1.8e308")&&inChallenge('UF',122)},
+        onClick(){
+         
+            player.UF.canupm=true
+        },
+        unlocked(){return hasMilestone('I',5)&&!player.UF.canupm&&player.UF.page==2},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },
     10001:{
         display() {return "<"},
         canClick(){return player.UF.page.gte(2)},
@@ -1409,6 +1479,7 @@ microtabs: {
                 ["row",[["challenge",121], ["clickable",121],["challenge",122], ["clickable",122],]],
                 ["row",[["challenge",201], ["clickable",201],["challenge",202], ["clickable",202],]],
                 ["row",[["challenge",211], ["clickable",211],["challenge",212], ["clickable",212],]],
+                ["row",[["challenge",221], ["clickable",221],["challenge",222], ["clickable",222],]],
                 ["row",[["clickable",10001],"blank",["clickable",10002]]],
 
             ],

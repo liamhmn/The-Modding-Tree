@@ -83,6 +83,7 @@ else return new Decimal("1e450000") },
                 if(inChallenge('NN',11)||hasChallenge('NN',11))return new Decimal("1")
                 if(inChallenge('IP',32))return new Decimal("1")
                 if(inChallenge('IP',22))return new Decimal("1")
+                if(player.X.points.gte(1)&&hasUpgrade('NN',24)) return player.NN.points.pow(16).add(1).min("1e1333")
                 if(player.X.points.gte(1)&&hasUpgrade('NN',23)) return player.NN.points.pow(9.87654321).add(1).min("1e555")
                 if(player.X.points.gte(1)&&hasUpgrade('NN',22)) return player.NN.points.pow(6.9420).add(1)
                 if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(5).add(1)
@@ -128,6 +129,7 @@ else return new Decimal("1e450000") },
             if(player.X.points.gte(1)) return new Decimal(31415)
         else    return new Decimal(15)},
         effect() {
+            if(player.X.points.gte(1)&&hasUpgrade('NN',25)) return player.NN.points.pow(0.4).add(1).min(1e48)
             if(player.X.points.gte(1)&&hasUpgrade('NN',22)) return player.NN.points.pow(0.45).add(1).min(1e12)
             if(player.X.points.gte(1)&&hasUpgrade('NN',21)) return player.NN.points.pow(0.4).add(1).min(1e12)
             if(player.X.points.gte(1)) return player.NN.points.pow(0.375).add(1).min(1e5)
@@ -200,9 +202,12 @@ else return new Decimal("1e450000") },
     },
     24: {
         title: "-9",
-        description: "Remove the fourth hardcap of '-2'. You can buy this upgrade while you are in Infinity Challenge 1.",
+        description(){
+            if(player.X.points.gte(1))  return "Remove the fourth hardcap of '-2' and boost it."
+            return "Remove the fourth hardcap of '-2'. You can buy this upgrade while you are in Infinity Challenge 1."},
         cost(){ 
-            if(player.I.activeChallenge!=11)return new Decimal(Infinity);
+            if(player.I.activeChallenge!=11&&!player.X.points.gte(1))return new Decimal(Infinity);
+            if(player.X.points.gte(1))  return new Decimal(1e35);
             return new Decimal(3.14e9);
         },
         unlocked(){
@@ -213,9 +218,12 @@ else return new Decimal("1e450000") },
     },
     25: {
         title: "-10",
-        description: "Remove the third hardcap of '-4'. You can buy this upgrade while you are in Infinity Challenge 2.",
+        description(){
+            if(player.X.points.gte(1))  return "Remove the third hardcap of '-4' and but nerf it."
+            return "Remove the third hardcap of '-4'. You can buy this upgrade while you are in Infinity Challenge 2."},
         cost(){ 
-            if(player.I.activeChallenge!=12)return new Decimal(Infinity);
+            if(player.I.activeChallenge!=12&&!player.X.points.gte(1))return new Decimal(Infinity);
+            if(player.X.points.gte(1))  return new Decimal(1e44);
             return new Decimal(3.14e9);
         },
         unlocked(){
@@ -283,7 +291,7 @@ else return new Decimal("1e450000") },
         1e50: {
             requirementDescription: "'-4' effect >= 1e48",
             effectDescription: "factor are cheaper.",
-            done() { return player.NN.points.gte(1e64) }
+            done() { return upgradeEffect("NN",14).gte(1e48)}
         },
         1.79e308: {
             requirementDescription: "1.79e308 Negative numbers",
