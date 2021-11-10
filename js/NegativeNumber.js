@@ -291,7 +291,8 @@ else return new Decimal("1e450000") },
         1e50: {
             requirementDescription: "'-4' effect >= 1e48",
             effectDescription: "factor are cheaper.",
-            done() { return upgradeEffect("NN",14).gte(1e48)}
+            done() { return player.NN.points.gte(1e64)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },
         1.79e308: {
             requirementDescription: "1.79e308 Negative numbers",
