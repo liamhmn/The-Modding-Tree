@@ -24,7 +24,8 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
        page: new Decimal(1),   
      CP: new Decimal(0),
      CPgain: new Decimal(0),
-
+     UP: new Decimal(0),
+    UPgain: new Decimal(0),
 
     }},
     color: "#FF0000",
@@ -483,7 +484,7 @@ rewardDescription(){return "You can mastered 1 more upgrade."},
     challengeDescription: "Number ^0.01",
     canComplete(){return player.N.points.gte(new Decimal("1e42").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))},
         goalDescription(){return format(new Decimal("1e42").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
-rewardDescription(){return "Unlock upgrade point (not yet)."},
+rewardDescription(){return "Unlock upgrade point and you can mastered 1 more upgrade."},
   unlocked(){return player.UF.canupm&&player.UF.page==2},
   onEnter(){
       player.N.points=new  Decimal(0)
@@ -1092,6 +1093,50 @@ unlocked(){
                 return challengeCompletions("UF",21)>3
             },
         },
+        1001: {
+            title: "Upgraded upgrade",
+            description: "Mastered '2', '3' and '4' used a greater effect.",
+            cost: new Decimal("100"),
+            currencyDisplayName: "Upgrade points",
+            currencyInternalName:"UP",
+            currencyLayer:"UF",
+            unlocked(){
+                return hasChallenge("UF",222)
+            },
+        }, 
+        1002: {
+            title: "Lots of master",
+            description: "Unlock more master upgrade and you can mastered 1 more upgrade.",
+            cost: new Decimal("314"),
+            currencyDisplayName: "Upgrade points",
+            currencyInternalName:"UP",
+            currencyLayer:"UF",
+            unlocked(){
+                return hasUpgrade("UF",1001)
+            },
+        }, 
+        1003: {
+            title: "Automation",
+            description: "Gain 100% of Negative Number on reset per second and Negative Number boost Number gain.",
+            cost: new Decimal("800"),
+            currencyDisplayName: "Upgrade points",
+            currencyInternalName:"UP",
+            currencyLayer:"UF",
+            unlocked(){
+                return hasUpgrade("UF",1002)
+            },
+        }, 
+        1004: {
+            title: "Useful",
+            description: "Upgrade point boost Number gain.",
+            cost: new Decimal("2400"),
+            currencyDisplayName: "Upgrade points",
+            currencyInternalName:"UP",
+            currencyLayer:"UF",
+            unlocked(){
+                return hasUpgrade("UF",1003)
+            },
+        }, 
 },
 
 update(diff){
@@ -1102,12 +1147,23 @@ update(diff){
     let CPgain= new Decimal("0")
     let CPgainstart = new Decimal("1e46")
     let CPgainbase = new Decimal("10")
+    let UPgain= new Decimal("0")
+    let UPgainstart = new Decimal("1e33")
+    let UPgainbase = new Decimal("10")
     let bestN= new Decimal("0")
+    let bestN2= new Decimal("0")
    player.UF.mp=player.UF.mp.plus(mpgain.times(diff))
-   if(inChallenge('UF',122)&&player.N.points.gte(bestN)) bestN=player.N.points
-   if(bestN.gte(1e46)) CPgain=bestN.div(CPgainstart).times(10).log(CPgainbase)
+
+   if(inChallenge('UF',222)&&player.N.points.gte(bestN2)) bestN2=player.N.points
+   if(bestN2.gte(UPgainstart)) UPgain=bestN2.div(UPgainstart).times(10).log(UPgainbase)
+player.UF.UP=player.UF.UP.add(UPgain.times(diff))
+player.UF.UPgain=UPgain
+
+if(inChallenge('UF',122)&&player.N.points.gte(bestN)) bestN=player.N.points
+if(bestN.gte(CPgainstart)) CPgain=bestN.div(CPgainstart).times(10).log(CPgainbase)
 player.UF.CP=player.UF.CP.add(CPgain.times(diff))
 player.UF.CPgain=CPgain
+
    if(hasUpgrade('UF',33))  player.UF.cost1 = new Decimal("ee20").pow(new Decimal(1).div(player.E.points.add(1).log(10).add(1).log(10).add(1).times(2).pow(1.25)).pow(new Decimal(1).div(buyableEffect('UF',21))))
    else if(hasMilestone('MS',600))  player.UF.cost1 = new Decimal("ee20").pow(new Decimal(1).div(player.E.points.add(1).log(10).add(1).log(10).add(1).times(2).pow(1.25)))
    else if(hasMilestone('UF',585555)) player.UF.cost1 = new Decimal("ee20").pow(new Decimal(1).div(player.E.points.add(1).log(10).add(1).log(10).add(1)))
@@ -1407,7 +1463,7 @@ tabFormat: {
       "challenges",
     ]
   },
-  "Challenge point":{
+  "Feature point":{
     unlocked(){return hasMilestone('I',3)&&player.X.points.gte(1)},
     content:[
   "main-display",
@@ -1420,9 +1476,14 @@ tabFormat: {
 
     let s = ""
     s+="You are gaining " + format(player.UF.CPgain) + " Challenge point per second (based on current Number in Meta upgrader.)<br>" 
-    s+="You have " + format(player.UF.CP) + " Challenge point, which make second page challenge req ^" + format(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15)))+"<br>" 
+    s+="You have " + format(player.UF.CP) + " Challenge point, which make second page challenge req ^" + format(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15)))+"<br><br><br>" 
+    if(hasChallenge("UF",222)){
+    s+="You are gaining " + format(player.UF.UPgain) + " Upgrade point per second (based on current Number in Meta upgrader+.)<br>" 
+    s+="You have " + format(player.UF.UP) + " Upgrade point.<br>" 
+    }
     return s
   }],
+  ["row", [ ["upgrade",1001], ["upgrade",1002], ["upgrade",1003], ["upgrade",1004], ["upgrade",1005]]],
   "blank",
 
     ]},

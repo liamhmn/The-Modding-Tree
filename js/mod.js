@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1.10",
+	num: "0.3.1.11",
 	name: "AGAIN",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+<h3>v0.3.1.11</h3><br>
+- Nothing here because I am lazy.<br>
+- Endgame: 11161 Factors and 1 ???.<br>
 <h3>v0.3.1.10</h3><br>
 - Nothing here because I am lazy.<br>
 - Endgame: Complete meta upgrader+ and 1 ???.<br>
@@ -440,7 +443,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.X.best.gte(1)&&hasChallenge("UF",222)
+	return player.X.best.gte(1)&&player.F.points.gte(11161)
 }
 
 

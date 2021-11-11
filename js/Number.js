@@ -10,6 +10,11 @@ addLayer("N", {
         m2:false,
         m3:false,
         m4:false,
+        m5:false,
+        m6:false,
+        m7:false,
+        m8:false,
+        m9:false,
         mt:new Decimal(0),
 ma:new Decimal(1)
     }},
@@ -38,6 +43,7 @@ ma:new Decimal(1)
         if (hasChallenge('F', 21)) mult = mult.times(1.5)
         if (hasChallenge('F', 11)) mult = mult.times(3)
         if (hasUpgrade('NN', 11)&&(!inChallenge('NN',32)&&!hasChallenge('NN',32))) mult = mult.times(1e4)
+        if (hasUpgrade('UF', 1003)) mult = mult.times(player.NN.points.add(10).log(10).pow(60))
         if (hasChallenge('F', 22)) mult = mult.times(2)
         if (hasAchievement("A", 12)) mult = mult.times(3)
         if (hasAchievement("A", 45)) mult = mult.times(1e5)
@@ -57,18 +63,20 @@ ma:new Decimal(1)
         if (hasMilestone('F', 1100)) mult = mult.times(player.F.points.add(1))
         if (hasMilestone('F', 1100)&&player.X.points.gte(1)) mult = mult.times(player.F.points.pow(1.5).add(1))
         if (hasMilestone('UF', 52)||hasUpgrade('N',31)) mult = mult.times(player.UF.points.pow(3).add(1))
+        if (hasUpgrade('N',31)&&player.N.m6) mult = mult.times(player.UF.points.pow(100).add(1))
         if (hasMilestone('UF', 35)) mult = mult.times(player.UF.points.pow(5).add(1))
         if (hasMilestone('UF', 128)) mult = mult.times(player.UF.points.pow(3).add(1))
         if(hasUpgrade('E',22)&&!hasUpgrade('MS',83))mult = mult.tetrate(1.02)
    else if(hasUpgrade('E',21))mult = mult.tetrate(1.01)
    mult = mult.tetrate(new Decimal(1).minus(player.X.points.times(0.05)))
    if(inChallenge('UF',121)) mult = mult.div( player.N.points.tetrate(0.15).add(1))
-   if(player.N.points.gte(1e857)||(hasChallenge('UF',122))) mult = mult.times(1e150)
+   if(player.N.m5) mult=mult.times(player.N.points.add(10).log(10).pow(70).max(1e150))
+ else  if(player.N.points.gte(1e857)||(hasChallenge('UF',122))) mult = mult.times(1e150)
   else if(hasChallenge('UF',121))  mult = mult.times( player.N.points.tetrate(0.175).add(1))
 else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult = mult.times( player.N.points.tetrate(0.15).add(1))
   else if(hasUpgrade('N',15)&&player.X.points.gte(1))  mult = mult.times( player.N.points.tetrate(0.1).add(1))
   if(hasUpgrade('F',14)&&player.X.points.gte(1)) mult = mult.times(2.5)
-
+  if(hasUpgrade('UF',1004)) mult = mult.times(player.UF.UP.add(1).pow(24))
     if(hasUpgrade('F',102))mult = mult.times(player.F.FP.add(1))
     if(inChallenge("UF",211))mult = new Decimal(1)
     if(inChallenge("F",24))mult = new Decimal(1).div(mult.pow(0.5))
@@ -78,7 +86,9 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         let mult=new Decimal(1) 
       if(inChallenge('F',43)&&player.X.points.gte(1)) mult = mult.times(0.3)
         if (hasMilestone('UF',11)&&(!inChallenge("NN", 21)&&!hasChallenge("NN", 21))) mult = mult.times(buyableEffect('N',21))
-        if (hasUpgrade('NN',32)&&(!inChallenge('NN',32)&&!hasChallenge('NN',32))) mult = mult.times(1.25)
+        if (hasUpgrade('NN',32)&&(!inChallenge('NN',32)&&!hasChallenge('NN',32))&&player.X.points.gte(1)) mult = mult.times(1.3)
+        else if (hasUpgrade('NN',32)&&(!inChallenge('NN',32)&&!hasChallenge('NN',32))) mult = mult.times(1.25)
+
         if (hasUpgrade('UF',24)) mult = mult.times(upgradeEffect('UF',24))
         if(hasMilestone('E',1e287)) mult = mult.times(upgradeEffect('UF',25))
         if (hasMilestone('I',1)) mult = mult.times(1.05)
@@ -148,6 +158,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         if(hasMilestone('UF',522000)) mult = mult.times(player.UF.mp.add(1).log(10).add(1).log(10).add(1).log(10).add(1.1))
         mult = mult.times(tmp.O.effect)
         if(hasUpgrade('UF',93)) mult = mult.times(player.E.CP.add(1).log(10).add(1))
+
         if (inChallenge('M',11)) mult = mult.times(0.00002) 
         if(hasMilestone('O',100))mult = mult.times(2)
         mult = mult.times(player.O.reward) 
@@ -220,6 +231,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(2e6)
             else    return new Decimal(5)},
             effect() {
+                if(player.X.points.gte(1)&&player.N.m2&&hasUpgrade("UF",1001)) return player.N.points.add(10).log(10).pow(50).max(1e160)
                 if(player.X.points.gte(1)&&player.N.m2) return 1e150
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122)) return new Decimal("1e75")
@@ -253,6 +265,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
             else    return new Decimal(20)},
           
             effect() {
+                if(player.X.points.gte(1)&&player.N.m3&&hasUpgrade("UF",1001)) return player.points.add(10).log(10).pow(70).max(1e185)
                 if(player.X.points.gte(1)&&player.N.m3) return 1e175
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e105
                 if(hasChallenge('UF',122))return new Decimal("1e100")
@@ -284,6 +297,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                 if(player.X.points.gte(1)) return new Decimal(5e7)
             else    return new Decimal(60)},
             effect() {
+                if(player.X.points.gte(1)&&player.N.m4&&hasUpgrade("UF",1001)) return player.points.add(10).log(10).pow(62.5).max(1e120)
                 if(player.X.points.gte(1)&&player.N.m4) return 1e110
                 if(player.X.points.gte(1)&&hasUpgrade("NN",15))  return 1e80
                 if(hasChallenge('UF',122))return new Decimal("1e75")
@@ -313,6 +327,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         15: {
             title: "5",
             description(){
+                if(player.N.m5)  return "Numbers boost itself.<br> Currently: " +format(player.N.points.add(10).log(10).pow(70).max(1e150))+"x"
                 if(player.N.points.gte("1e857")||(hasChallenge('UF',122)))   return "Numbers boost itself.<br> Currently: 1.00e150x"
                 if(hasChallenge('UF',121))  return "Numbers boost itself.<br> Currently: "+format(player.N.points.tetrate(0.175).add(1))+"x"
                 if(hasUpgrade('N',24))    return "Numbers boost itself.<br> Currently: "+format(player.N.points.tetrate(0.15).add(1))+"x"
@@ -820,7 +835,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                       },
                     unlocked(){return hasChallenge("UF",212)},
                     },
-                    14:{
+14:{
                         display() {
                             return "Master '4'. Currenty: "+player.N.m4},
             
@@ -830,15 +845,27 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
                           },
                         unlocked(){return hasChallenge("UF",212)},
                         },
-        },
+ 15:{display() {return "Master '5'. Currenty: "+player.N.m5},canClick(){return player.N.m5||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},onClick(){player.N.m5=!player.N.m5},unlocked(){return hasUpgrade("UF",1002)},},
+ 21:{display() {return "Master '11'. Currenty: "+player.N.m6},canClick(){return player.N.m6||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},onClick(){player.N.m6=!player.N.m6},unlocked(){return hasUpgrade("UF",1002)},},
+ 22:{display() {return "Master '12'. Currenty: "+player.N.m7},canClick(){return player.N.m7||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},onClick(){player.N.m7=!player.N.m7},unlocked(){return hasUpgrade("UF",1002)},},
+ 23:{display() {return "Master '15'. Currenty: "+player.N.m8},canClick(){return player.N.m8||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},onClick(){player.N.m8=!player.N.m8},unlocked(){return hasUpgrade("UF",1002)},},
+ //24:{display() {return "Master '9'. Currenty: "+player.N.m9},canClick(){return player.N.m9||new Decimal(0).add(tmp.N.mt).lt(player.N.ma)},onClick(){player.N.m9=!player.N.m9},unlocked(){return hasUpgrade("UF",1002)},},
+},
         mt(){
             let mt=new Decimal(0)
             if(player.N.m1) mt=mt.add(1)
             if(player.N.m2) mt=mt.add(1)
             if(player.N.m3) mt=mt.add(1)
             if(player.N.m4) mt=mt.add(1)
+            if(player.N.m5) mt=mt.add(1)
+            if(player.N.m6) mt=mt.add(1)
+            if(player.N.m7) mt=mt.add(1)
+            if(player.N.m8) mt=mt.add(1)
+            if(player.N.m9) mt=mt.add(1)
             let ma=new Decimal(1)
             if(hasChallenge("UF",221)) ma++
+            if(hasChallenge("UF",222)) ma++
+            if(hasUpgrade("UF",1002)) ma++
 player.N.ma=ma
             return mt
   

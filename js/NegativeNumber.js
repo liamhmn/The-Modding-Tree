@@ -243,11 +243,16 @@ else return new Decimal("1e450000") },
             },
             32: {
                 title: "-12",
-                description: "Number ^1.25",
-                cost: new Decimal(1e103),
+                description(){
+                    if(player.X.points.gte(1))  return "Number ^1.28"
+                    return "Number ^1.25"},
+                cost(){                   
+                    if(player.X.points.gte(1))  return new Decimal(2e130);
+                    return new Decimal(1e103);
+                },
              
                 unlocked(){
-                    return hasUpgrade("F", 42)
+                    return hasUpgrade("F", 42)||(hasUpgrade("NN", 25)&&player.X.points.gte(1))
                 },
             },
             33: {
@@ -256,7 +261,7 @@ else return new Decimal("1e450000") },
                 cost: new Decimal(1e117),
              
                 unlocked(){
-                    return hasUpgrade("NN", 32)
+                    return hasUpgrade("NN", 32)&&!player.X.points.gte(1)
                 },
             },
             34: {
@@ -453,7 +458,7 @@ else return new Decimal("1e450000") },
       },
       },
       layerShown(){return (player.I.best.gte(3)||hasMilestone('E',1))&&(!hasChallenge('NN',32)||hasUpgrade('N',71))},
-      passiveGeneration(){return hasMilestone('IP',6)? 1 : 0},
+      passiveGeneration(){return hasMilestone('IP',6)||hasUpgrade("UF",1003)? 1 : 0},
       automateStuff(){
         if(hasUpgrade("IP",21)){
           if(layers.NN.buyables[11].canAfford())setBuyableAmount("NN",11,player.NN.points.log(1e20).floor().add(1))

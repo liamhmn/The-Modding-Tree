@@ -243,6 +243,7 @@ addLayer("F", {
             effect() {
            
                 if (inChallenge('F',22)) return 1 
+                if(player.X.points.gte(1)&&player.N.m7) return player.N.points.pow(0.24).add(1)
                 if(player.X.points.gte(1)&&hasChallenge('UF',202)) return player.N.points.pow(0.22).add(1)
                 if(player.X.points.gte(1)&&hasUpgrade('N',32)) return player.N.points.pow(0.16).add(1)
                 if(player.X.points.gte(1)&&hasUpgrade('F',24)) return player.N.points.pow(0.12).add(1)
@@ -764,6 +765,7 @@ addLayer("F", {
             let exp=new Decimal(0.35)
             if(hasUpgrade('F',101)) exp=new Decimal(0.5)
             if(hasUpgrade('N',35)) exp=new Decimal(8)
+            if(hasUpgrade('N',35)&&player.N.m8) exp=new Decimal(15)
             if(hasUpgrade('F',14)) gain=gain.add(player.F.points.pow(exp))      
             if(hasUpgrade('F',101)) gain=gain.times(player.N.points.add(10).log(10).pow(2))
             if(hasMilestone('F',56)) gain=gain.times(upgradeEffect('F',11))

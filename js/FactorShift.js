@@ -52,5 +52,5 @@ addLayer("FS", {
             done() { return player.FS.points.gte(1) }
         },
     },
-    layerShown(){return (hasMilestone('NN',1e50)||hasMilestone('IP',1)||hasMilestone('FS',1))&&!hasUpgrade('E',22)}
+    layerShown(){return ((hasMilestone('NN',1e50)||hasMilestone('IP',1)||hasMilestone('FS',1))&&!hasUpgrade('E',22))||(player.F.points.gte(11161)&&player.X.points.gte(1))}
 })
