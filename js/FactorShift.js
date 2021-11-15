@@ -7,12 +7,15 @@ addLayer("FS", {
 		points: new Decimal(0),
     }},
     color: "#966400",
-    requires: new Decimal(100000000), // Can be a function that takes requirement increases into account
+    requires(){
+        if(player.X.points.gte(1))    return new Decimal(11161)
+       else return new Decimal(100000000)} ,
     resource(){return "Factor shift"}, 
     baseResource: "Factors", // Name of resource prestige is based on
     baseAmount() {return player.F.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     base(){
+        if(player.X.points.gte(1))    return new Decimal(1.55)
         if(inChallenge('E',31)||hasUpgrade('E',22))return new Decimal("eeeeeeeeee10")
        else return 1000},
     exponent(){
@@ -34,6 +37,7 @@ addLayer("FS", {
         return mult
     },
     resetsNothing(){
+        if(player.X.points.gte(1))  return hasMilestone('FS',1)  
         return hasMilestone('MS',1);
     },autoPrestige(){
         return hasMilestone('MS',40);
@@ -48,7 +52,9 @@ addLayer("FS", {
     milestones: {
         1: {
             requirementDescription: "1 Factor shift",
-            effectDescription: "Per factor shift make factor cheaper.",
+            effectDescription() {
+              if(player.X.points.gte(1))    return "Factor shift reset nothing and unlock prime factor."
+              else  return "Per factor shift make factor cheaper."},
             done() { return player.FS.points.gte(1) }
         },
     },

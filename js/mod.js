@@ -422,7 +422,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	function(){	
 		let s=""
-		if (isEndgame())  s+= "Congratulations, You reach the endgame."
+		if (isEndgame())  s+= "Congratulations, You reach the endgame.<br><h3>Don't go pass endgame because it may break the game."
 		else if (player.X.best.gte(1))  s+= "You have 0 layers left to unlock."					
 		else if (player.S.best.gte(1))  s+= "You have 1 layer left to unlock.<br> Next layer at '1.798F308' upgrade (Just a upgrade name)."
 		else if (player.M.best.gte(1)&&player.O.best.gte(1))  s+="You have 2 layers left to unlock.<br> Next layer at 1.80e308 Infinity."
