@@ -302,7 +302,8 @@ else return new Decimal("1e450000") },
         1.79e308: {
             requirementDescription: "1.79e308 Negative numbers",
             effectDescription: "Unlock a new layer.",
-            done() { return player.NN.points.gte(1.79e308) }
+            done() { return (player.NN.points.gte(1.79e308)&&!player.X.points.gte(1)) },
+            unlocked() { return !player.X.points.gte(1)}
         },
     },
     buyables: {

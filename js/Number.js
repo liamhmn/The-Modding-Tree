@@ -71,7 +71,7 @@ ma:new Decimal(1)
    mult = mult.tetrate(new Decimal(1).minus(player.X.points.times(0.05)))
    if(inChallenge('UF',121)) mult = mult.div( player.N.points.tetrate(0.15).add(1))
    if(player.N.m5) mult=mult.times(player.N.points.add(10).log(10).pow(70).max(1e150))
- else  if(player.N.points.gte(1e857)||(hasChallenge('UF',122))) mult = mult.times(1e150)
+ else  if((player.N.points.gte(1e857)||(hasChallenge('UF',122)))) mult = mult.times(1e150)
   else if(hasChallenge('UF',121))  mult = mult.times( player.N.points.tetrate(0.175).add(1))
 else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult = mult.times( player.N.points.tetrate(0.15).add(1))
   else if(hasUpgrade('N',15)&&player.X.points.gte(1))  mult = mult.times( player.N.points.tetrate(0.1).add(1))
@@ -79,7 +79,8 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
   if(hasUpgrade('UF',1004)) mult = mult.times(player.UF.UP.add(1).pow(24).min(1e120))
     if(hasUpgrade('F',102))mult = mult.times(player.F.FP.add(1))
     if(inChallenge("UF",211))mult = new Decimal(1)
-    if(inChallenge("F",24))mult = new Decimal(1).div(mult.pow(0.5))
+    if(inChallenge("F",24)||inChallenge("UF",301))mult = new Decimal(1).div(mult.pow(0.5))
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -171,7 +172,9 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       if(hasUpgrade('F',104))mult = mult.times(1.0777)
       mult = mult.times(new Decimal(1).minus(player.X.points.times(0.05)))
       if(inChallenge("UF",211))mult = new Decimal(1)
-      if(inChallenge("UF",212))mult = new Decimal(1).div(mult)
+      mult=mult.times(player.FS.pfp.add(10).log(10).add(9).log(10))
+      if(inChallenge("UF",212)||inChallenge("UF",301))mult = new Decimal(1).div(mult)
+      if(inChallenge("UF",302))mult = mult.times(new Decimal(0.0001))
         return mult
 
     },

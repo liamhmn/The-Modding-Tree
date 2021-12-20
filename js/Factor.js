@@ -48,6 +48,13 @@ addLayer("F", {
         else return 0.75
 
     },
+    directMult(){
+        let gain=new Decimal(1)
+gain=gain.times(player.FS.pfp.add(10).log(10).add(9).log(10))
+if(hasChallenge("UF",301))gain=gain.times(1.13)
+if(hasChallenge("UF",302))gain=gain.times(1.06)
+return gain
+    },
     branches:["N"],
      // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -197,7 +204,8 @@ addLayer("F", {
         12500: {
             requirementDescription: "12500 factors",
             effectDescription: "Remove the second hardcap of '+'.",
-            done() { return player.F.points.gte(12500)}
+            done() { return player.F.points.gte(12500)&&!player.X.points.gte(1)},
+            unlocked() { return !player.X.points.gte(1)}
         },  
         1.25e40: {
             requirementDescription: "1.25e40 factors",

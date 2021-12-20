@@ -21,6 +21,7 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
        canupd: false,
        canupe: false,
        canupm: false,
+       canupm1: false,
        page: new Decimal(1),   
      CP: new Decimal(0),
      CPgain: new Decimal(0),
@@ -115,6 +116,7 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupd")
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupe")
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupm")
+        if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupm1")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     milestones: {
@@ -488,6 +490,36 @@ rewardDescription(){return "You can mastered 1 more upgrade."},
         goalDescription(){return format(new Decimal("1e42").pow(new Decimal(1).div(player.UF.CP.add(5).log(5).pow(0.15))))+ " Numbers"},
 rewardDescription(){return "Unlock upgrade point and you can mastered 1 more upgrade."},
   unlocked(){return player.UF.canupm&&player.UF.page==2},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
+301: {  
+    name: "upgrader -1",
+    challengeDescription: "You trapped in Reverse and upgrader delta",
+    canComplete(){return player.N.points.gte(new Decimal("4.20e410"))},
+        goalDescription(){return format(new Decimal("4.20e410"))+ " Numbers"},
+rewardDescription(){return "Factor gain x1.13"},
+  unlocked(){return player.UF.canupm1&&player.UF.page==3},
+  onEnter(){
+      player.N.points=new  Decimal(0)
+      player.points=new  Decimal(0)
+      setBuyableAmount('N',11,new Decimal(0))
+      setBuyableAmount('N',12,new Decimal(0)) 
+      setBuyableAmount('N',21,new Decimal(0))
+    },
+},
+302: {  
+    name: "upgrader -2",
+    challengeDescription: "Number gain ^0.0001",
+    canComplete(){return player.N.points.gte(new Decimal("500"))},
+        goalDescription(){return format(new Decimal("500"))+ " Numbers"},
+rewardDescription(){return "Factor gain x1.06"},
+  unlocked(){return player.UF.canupm2&&player.UF.page==3},
   onEnter(){
       player.N.points=new  Decimal(0)
       player.points=new  Decimal(0)
@@ -1359,6 +1391,38 @@ clickables:{
         
         }
     },
+    301:{
+        display() {return "Explore A New Challenge.<br>Req: 20000 factor point."},
+        canClick(){return player.FS.pfp.gte("20000")},
+        onClick(){
+         
+            player.UF.canupm1=true
+        },
+        unlocked(){return hasMilestone('FS',2)&&!player.UF.canupm1&&player.UF.page==3},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },
+    302:{
+        display() {return "Explore A New Challenge.<br>Req: 6e7 factor point."},
+        canClick(){return player.FS.pfp.gte("6e7")},
+        onClick(){
+         
+            player.UF.canupm2=true
+        },
+        unlocked(){return hasMilestone('FS',2)&&!player.UF.canupm2&&player.UF.page==3},
+        style() { return {
+            "font-size": "15px",
+            "height": "300px",
+            "width": "300px"
+            }
+        
+        }
+    },
     10001:{
         display() {return "<"},
         canClick(){return player.UF.page.gte(2)},
@@ -1369,7 +1433,10 @@ clickables:{
     },
     10002:{
         display() {return ">"},
-        canClick(){return !player.UF.page.gte(2)},
+        canClick(){
+            if(hasMilestone("FS",2)) return !player.UF.page.gte(3)
+            return !player.UF.page.gte(2)
+        },
         onClick(){
             player.UF.page= player.UF.page.add(1)
         },
@@ -1543,6 +1610,7 @@ microtabs: {
                 ["row",[["challenge",201], ["clickable",201],["challenge",202], ["clickable",202],]],
                 ["row",[["challenge",211], ["clickable",211],["challenge",212], ["clickable",212],]],
                 ["row",[["challenge",221], ["clickable",221],["challenge",222], ["clickable",222],]],
+                ["row",[["challenge",301], ["clickable",301],["challenge",302], ["clickable",302],]],
                 ["row",[["clickable",10001],"blank",["clickable",10002]]],
 
             ],
