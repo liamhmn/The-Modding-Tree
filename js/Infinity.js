@@ -294,7 +294,7 @@ addLayer("I", {
               name: "primegg",
               challengeDescription(){return"Factor point gain ^"+formatSmall(new Decimal(0.2).pow(new Decimal(1).add(challengeCompletions("I",82))))},
               canComplete(){return player.N.points.gte("1e314159")},
-              goalDescription: "1e300000 Numbers",
+              goalDescription: "1e314159 Numbers",
               rewardDescription(){ 
                  return "Multiple prime factor point gain by "+format(new Decimal(1).add(challengeCompletions("I",82)).tetrate(1.75))+"<br> you can complete it "+challengeCompletions("I",82)+"/5 times"
               },
