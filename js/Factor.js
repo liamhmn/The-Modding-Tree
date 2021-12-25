@@ -202,10 +202,13 @@ return gain
             done() { return (player.F.points.gte(6000)||(player.F.points.gte(1700)&&player.X.points.gte(1)))||(hasMilestone("I", 1)&&!player.X.points.gte(1))||hasMilestone("MS", 2)}
         },  
         12500: {
-            requirementDescription: "12500 factors",
-            effectDescription: "Remove the second hardcap of '+'.",
-            done() { return player.F.points.gte(12500)&&!player.X.points.gte(1)},
-            unlocked() { return !player.X.points.gte(1)}
+            requirementDescription() {
+                if(player.X.points.gte(1))    return "90000 factors"
+                else  return "12500 factors"},  
+                effectDescription() {
+                    if(player.X.points.gte(1))    return "Unlock 3 Infinity challenge."
+                    else  return  "Remove the second hardcap of '+'."},      
+            done() { return player.F.points.gte(12500)||(player.F.points.gte(90000)&&player.X.points.gte(1))},
         },  
         1.25e40: {
             requirementDescription: "1.25e40 factors",
@@ -779,6 +782,7 @@ return gain
             if(hasMilestone('F',56)) gain=gain.times(upgradeEffect('F',11))
             if(hasMilestone('UF',35)) gain=gain.times(player.UF.points.add(1).pow(4))
             if(hasUpgrade("NN",21))gain=gain.times(player.NN.points.add(1).pow(0.15))
+            if(inChallenge("I",82))gain=gain.pow(new Decimal(0.2).pow(new Decimal(1).add(challengeCompletions("I",82))))
             player.FPgain=gain
            player.F.FP= player.F.FP.add(player.FPgain.times(diff))
 
@@ -860,6 +864,7 @@ return gain
       doReset(resettingLayer) {
         let keep = [];
         if (resettingLayer=="E") keep.push("milestones")
+        if (hasMilestone("Z", 4) &&resettingLayer=="Z") keep.push("milestones")
         if (hasMilestone("I", 2) && resettingLayer=="I") keep.push("milestones")
         if (hasMilestone("I", 3) && resettingLayer=="I") keep.push("challenges")
         if (hasMilestone("IP", 1) && resettingLayer=="IP") keep.push("challenges")

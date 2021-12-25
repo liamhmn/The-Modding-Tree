@@ -31,6 +31,7 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
     }},
     color: "#FF0000",
     requires() {
+        if(hasMilestone("FS",5))  return new Decimal("10^^10")
         if(player.X.points.gte(1))  return new Decimal(1e50)
      else   return new Decimal(1e30)},
     resource(){
@@ -72,6 +73,7 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
     doReset(resettingLayer) {
         let keep = [];
         if (hasMilestone("I", 2) && resettingLayer=="I") keep.push("milestones")
+        if (resettingLayer=="Z") keep.push("milestones")
         if (hasMilestone("IP", 6) && resettingLayer=="IP") keep.push("milestones")
         if (hasMilestone("UF", 5100) && resettingLayer=="IP") keep.push("milestones")
         if (hasMilestone("UF", 5100) && resettingLayer=="I") keep.push("milestones")
@@ -96,7 +98,7 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
         if (hasMilestone("E", 8) && resettingLayer=="E") keep.push("buyables")
         if (hasMilestone("M", 4) && resettingLayer=="M") keep.push("buyables")
         if (hasMilestone("M", 4) && resettingLayer=="O") keep.push("buyables")
-        if (hasMilestone('I',2)&&player.X.points.gte(1)&& resettingLayer=="I") keep.push("challenges")
+        if ((hasMilestone('I',2)||player.Z.points.gte(1))&&player.X.points.gte(1)) keep.push("challenges")
         if (challengeCompletions("UF",21)>0 && resettingLayer=="IP") keep.push("challenges")
         if (challengeCompletions("UF",21)>0 && resettingLayer=="I") keep.push("challenges")
         if (challengeCompletions("UF",21)>0 && resettingLayer=="M") keep.push("challenges")
@@ -117,6 +119,8 @@ else return  "Upgrade Factor"}, // This is optional, only used in a few places, 
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupe")
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupm")
         if (hasMilestone('I',2)&&player.X.points.gte(1)) keep.push("canupm1")
+        if (hasMilestone('FS',4)&&player.X.points.gte(1)) keep.push("CP")
+        if (hasMilestone('FS',4)&&player.X.points.gte(1)) keep.push("UP")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     milestones: {
@@ -1625,5 +1629,5 @@ microtabs: {
   canBuyMax(){
     return hasUpgrade('F',41) 
   },
-  layerShown(){return ((hasChallenge('F',22)||hasMilestone('IP',1)||hasMilestone('FS',1)||hasMilestone('UF',1)||hasMilestone('I',1))&&!inChallenge('NN',31))&&!hasUpgrade('E',22)},
+  layerShown(){return ((hasChallenge('F',22)||hasMilestone('IP',1)||hasMilestone('FS',1)||hasMilestone('UF',1)||hasMilestone('I',1))&&!inChallenge('NN',31))&&!hasUpgrade('E',22)&&!hasMilestone("FS",5)},
 })

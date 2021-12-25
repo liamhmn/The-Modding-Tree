@@ -48,6 +48,7 @@ addLayer("NN", {
         if (hasMilestone('IP',10000)) mult = mult.times(1.05)
         if(inChallenge('E',11)&&(!player.E.NNpower.gte(1))) mult = mult.times(0)
         if((inChallenge('NN',32)||hasChallenge('NN',32))&&!hasUpgrade('N',71)) mult = mult.times(0)
+        if(inChallenge("I",81))mult=mult.times(new Decimal(0.3).pow(new Decimal(1).add(challengeCompletions("I",81))))
         
         return mult
     },
@@ -395,6 +396,7 @@ else return new Decimal("1e450000") },
     doReset(resettingLayer) {
         let keep = [];
         if (hasMilestone("I", 4) && resettingLayer=="I") keep.push("milestones")
+        if (hasMilestone("Z", 3) && resettingLayer=="Z") keep.push("upgrades")
         if (hasMilestone("I", 4) && resettingLayer=="I") keep.push("upgrades")
         if (hasMilestone("IP", 2) && resettingLayer=="IP") keep.push("upgrades")
         if (hasMilestone("E", 5) && resettingLayer=="E") keep.push("upgrades")

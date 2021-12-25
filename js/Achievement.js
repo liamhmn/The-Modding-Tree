@@ -240,7 +240,7 @@ addLayer("A", {
         }, 
         47:{
             name: "+ - x / ^",
-            tooltip:"Get 1 Mathematics Symbol",
+            tooltip:"Get 1 Mathematics Symbol. Reward: Always keep factor shift milestone on reset.",
             done()  {
                 if (hasMilestone('MS',1))  return true
             },
@@ -424,6 +424,36 @@ addLayer("A", {
     tooltip:"Reach 1.8e308 points with 1 ???. Reward: Unlock '-3' earlier",
     done()  {
         if (player.X.points.gte(1)&&player.points.gte("1.8e308"))  return true
+    },
+    unlocked(){
+        return player.X.points.gte(1)
+    }
+},
+75:{
+    name: "OM rewritten",
+    tooltip:"Reach 1 Factor Shift with 1 ???.",
+    done()  {
+        if (player.X.points.gte(1)&&player.FS.points.gte("1"))  return true
+    },
+    unlocked(){
+        return player.X.points.gte(1)
+    }
+},
+76:{
+    name: "Infinityal",
+    tooltip:"Complete a Infinity challenge with 1 ???.",
+    done()  {
+        if (player.X.points.gte(1)&&challengeCompletions("I",71)>=1)  return true
+    },
+    unlocked(){
+        return player.X.points.gte(1)
+    }
+},
+77:{
+    name: "New things",
+    tooltip:"Get 1 zero",
+    done()  {
+        if (player.X.points.gte(1)&&player.Z.points.gte(1))  return true
     },
     unlocked(){
         return player.X.points.gte(1)

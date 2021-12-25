@@ -6,6 +6,7 @@ addLayer("FS", {
         unlocked: false,
 		points: new Decimal(0),
         pfp: new Decimal(0),
+        pfpgain: new Decimal(0),
         product:new Decimal(0),
     }},
     color: "#966400",
@@ -55,7 +56,7 @@ addLayer("FS", {
         1: {
             requirementDescription: "1 Factor shift",
             effectDescription() {
-              if(player.X.points.gte(1))    return "Factor shift reset nothing and per factor shift (up to 4) unlock prime factor."
+              if(player.X.points.gte(1))    return "Factor shift reset nothing and per factor shift (up to 5) unlock a prime factor."
               else  return "Per factor shift make factor cheaper."},
             done() { return player.FS.points.gte(1) }
         },
@@ -65,6 +66,31 @@ addLayer("FS", {
             done() { return player.FS.points.gte(2)&&player.X.points.gte(1)},
             unlocked() { return player.X.points.gte(1)}
         },
+        3: {
+          requirementDescription: "6 Factor shift",
+          effectDescription() {return "Unlock new Infinity challenge."},
+          done() { return player.FS.points.gte(6)&&player.X.points.gte(1)},
+          unlocked() { return player.X.points.gte(1)}
+      },
+      4: {
+        requirementDescription: "9 Factor shift",
+        effectDescription() {return "Unlock a new prime factor, keep challenge point and upgrade point on reset."},
+        done() { return player.FS.points.gte(9)&&player.X.points.gte(1)},
+        unlocked() { return player.X.points.gte(1)}
+    },
+    5: {
+      requirementDescription: "1e105 prime factor point",
+      effectDescription() {return "Number gain ^1.14. However, remove upgrade factor layer (You can't get UF, but their challenge and upgrade won't reset.)"},
+      done() { return player.FS.pfp.gte(1e105)&&player.X.points.gte(1)},
+      unlocked() { return player.X.points.gte(1)},
+      onComplete(){
+        player.UF.points=new Decimal(0)
+        player.UF.FP=new Decimal(0)
+        player.UF.CP=new Decimal(0)
+        player.UF.activechallenge=null
+        doReset("I",true)
+      }
+  },
     },
     layerShown(){return ((hasMilestone('NN',1e50)||hasMilestone('IP',1)||hasMilestone('FS',1))&&!hasUpgrade('E',22))||(player.F.points.gte(11161)&&player.X.points.gte(1))},
     buyables: {
@@ -174,6 +200,58 @@ addLayer("FS", {
                 
             }
         },
+        22: {
+          title: "11",
+          display() {
+             return "Give " + format(tmp.FS.buyables[22].effect) + " eleven factor <br>Cost : " + format(tmp.FS.buyables[22].cost) + " Factors"
+          },
+          unlocked() { return player.X.points.gte(1)&&player.FS.points.gte(5) },
+          canAfford() { 
+            return player.F.points.gte(tmp.FS.buyables[22].cost) 
+          },
+          cost(){
+          return  new Decimal("3.75e4").times(getBuyableAmount((this.layer), (this.id)).pow(getBuyableAmount((this.layer), (this.id)).times(0.175)))
+          },
+          buy() { 
+              {
+                 player.F.points = player.F.points.minus(tmp.FS.buyables[22].cost)
+              }
+              setBuyableAmount("FS", 22, getBuyableAmount("FS", 22).add(1))
+          },
+          effect() { 
+
+            return new Decimal(11).pow(getBuyableAmount("FS", 22))
+              
+             
+              
+          }
+      },
+      23: {
+        title: "13",
+        display() {
+           return "Give " + format(tmp.FS.buyables[23].effect) + " thirteen factor <br>Cost : " + format(tmp.FS.buyables[23].cost) + " Factors"
+        },
+        unlocked() { return player.X.points.gte(1)&&player.FS.points.gte(9) },
+        canAfford() { 
+          return player.F.points.gte(tmp.FS.buyables[23].cost) 
+        },
+        cost(){
+        return  new Decimal("1e5").times(getBuyableAmount((this.layer), (this.id)).pow(getBuyableAmount((this.layer), (this.id)).times(0.225)))
+        },
+        buy() { 
+            {
+               player.F.points = player.F.points.minus(tmp.FS.buyables[23].cost)
+            }
+            setBuyableAmount("FS", 23, getBuyableAmount("FS", 23).add(1))
+        },
+        effect() { 
+
+          return new Decimal(13).pow(getBuyableAmount("FS", 23))
+            
+           
+            
+        }
+    },
     },
     update(diff){
         let pro=new Decimal(1)
@@ -181,8 +259,17 @@ addLayer("FS", {
         pro=pro.times(tmp.FS.buyables[12].effect)
         pro=pro.times(tmp.FS.buyables[13].effect)
         pro=pro.times(tmp.FS.buyables[21].effect)
+       pro=pro.times(tmp.FS.buyables[22].effect)
+       pro=pro.times(tmp.FS.buyables[23].effect)
+        let mult=new Decimal(1)
+       mult=mult.times(new Decimal(1).add(challengeCompletions("I",71)).tetrate(2))
+       mult=mult.times(new Decimal(1).add(challengeCompletions("I",72)).tetrate(2.25))
+       mult=mult.times(new Decimal(1).add(challengeCompletions("I",81)).tetrate(2.15))
+       mult=mult.times(new Decimal(1).add(challengeCompletions("I",82)).tetrate(1.75))
+       if(hasMilestone("Z",1))mult=mult.times(10)
         player.FS.product=pro
-    if(player.FS.points.gte(1)&&player.X.points.gte(1))   player.FS.pfp= player.FS.pfp.add(pro.times(diff))
+        player.FS.pfpgain=pro.times(mult)
+    if(player.FS.points.gte(1)&&player.X.points.gte(1))   player.FS.pfp= player.FS.pfp.add(pro.times(mult).times(diff)).min(1e120)
 
     },
     tabFormat:[
@@ -198,10 +285,25 @@ addLayer("FS", {
       ["display-text",function(){
     
         let s = ""
-if(player.X.points.gte(1)) s+= "Your prime factor product is "+format(player.FS.product)+", which make you gain "+format(player.FS.product)+" prime factor point per second.<br>"
+if(player.X.points.gte(1)) s+= "Your prime factor product is "+format(player.FS.product)+", which make you gain "+format(player.FS.pfpgain)+" prime factor point per second.<br>"
 if(player.X.points.gte(1)) s+= "Your have "+format(player.FS.pfp)+" prime factor point, which boost factor and number exp by "+format(player.FS.pfp.add(10).log(10).add(9).log(10))+"."
         return s
       }],
     
     ],
+    doReset(resettingLayer) {
+      let keep = [];
+      keep.push("milestones")
+      if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+  },
+  automateStuff(){
+    if(hasMilestone("Z",5)){
+        if(layers.FS.buyables[11].canAfford())setBuyableAmount("FS",11,getBuyableAmount("FS",11).add(1))   
+      if(layers.FS.buyables[12].canAfford())setBuyableAmount("FS",12,getBuyableAmount("FS",12).add(1)) 
+    }
+    if(hasMilestone("Z",6)){
+      if(layers.FS.buyables[13].canAfford())setBuyableAmount("FS",13,getBuyableAmount("FS",13).add(1))   
+    if(layers.FS.buyables[21].canAfford())setBuyableAmount("FS",21,getBuyableAmount("FS",21).add(1)) 
+  }
+},
 })

@@ -80,7 +80,6 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
     if(hasUpgrade('F',102))mult = mult.times(player.F.FP.add(1))
     if(inChallenge("UF",211))mult = new Decimal(1)
     if(inChallenge("F",24)||inChallenge("UF",301))mult = new Decimal(1).div(mult.pow(0.5))
-
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -93,6 +92,7 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         if (hasUpgrade('UF',24)) mult = mult.times(upgradeEffect('UF',24))
         if(hasMilestone('E',1e287)) mult = mult.times(upgradeEffect('UF',25))
         if (hasMilestone('I',1)) mult = mult.times(1.05)
+        if (hasMilestone('Z',1)) mult = mult.times(1.05)
         if (hasMilestone('I',2)) mult = mult.times(1.05)
         if (inChallenge('IP',11)) mult = mult.times(0.9)
         if (inChallenge('IP',21)) mult = mult.times(0.5)
@@ -171,10 +171,13 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
       if(hasUpgrade('MS',83))mult = mult.times(10)
       if(hasUpgrade('F',104))mult = mult.times(1.0777)
       mult = mult.times(new Decimal(1).minus(player.X.points.times(0.05)))
-      if(inChallenge("UF",211))mult = new Decimal(1)
-      mult=mult.times(player.FS.pfp.add(10).log(10).add(9).log(10))
-      if(inChallenge("UF",212)||inChallenge("UF",301))mult = new Decimal(1).div(mult)
+      if(hasMilestone('FS',5))mult = mult.times(1.14)
       if(inChallenge("UF",302))mult = mult.times(new Decimal(0.0001))
+      if(inChallenge("I",72))mult=mult.times(new Decimal(0.8).pow(new Decimal(1).add(challengeCompletions("I",72))))
+      mult=mult.times(player.FS.pfp.add(10).log(10).add(9).log(10))
+      if(inChallenge("UF",211))mult = new Decimal(1)
+      if(inChallenge("UF",212)||inChallenge("UF",301))mult = new Decimal(1).div(mult)
+
         return mult
 
     },
@@ -207,6 +210,11 @@ else if(hasUpgrade('N',24)&&player.X.points.gte(1)&&!inChallenge('UF',121))mult 
         keep.push("m2")
         keep.push("m3")
         keep.push("m4")
+        keep.push("m5")
+        keep.push("m6")
+        keep.push("m7")
+        keep.push("m8")
+        keep.push("m9")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
         for(i in extraUpgrades) {
             if (!player[this.layer].upgrades.includes(extraUpgrades[i])) {

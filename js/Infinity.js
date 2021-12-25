@@ -95,9 +95,23 @@ addLayer("I", {
         },
         69: {
             requirementDescription: "69 Infinity (NICE)",
-            effectDescription: "Infinity boost Negative Numbers gain and auto buy factor and number buyable.",
+            effectDescription() {
+              if(player.X.points.gte(1))    return "Infinity boost Negative Numbers gain."
+              else  return "Infinity boost Negative Numbers gain and auto buy factor and number buyable."},
             done() { return player.I.points.gte(69) }
         },
+        300: {
+          requirementDescription: "300 Infinity",
+          effectDescription: "Point gain is dilated by 1.025.",
+          done() { return player.I.points.gte(300)&&player.X.points.gte(1)},
+          unlocked() {return player.X.points.gte(1) }
+      },
+      40000: {
+        requirementDescription: "40000 Infinity",
+        effectDescription: "Unlock a layer.",
+        done() { return player.I.points.gte(40000)&&player.X.points.gte(1)},
+        unlocked() {return player.X.points.gte(1) }
+    },
         90000: {
             requirementDescription: "90000 Infinity ",
             effectDescription: "Unlock 2 Infinity challenge.",
@@ -119,7 +133,7 @@ addLayer("I", {
             canComplete(){return player.N.points.gte("1.8e308")},
             goalDescription: "1.80e308 Numbers",
             rewardDescription(){return "Number ^1.2."},
-          unlocked(){return hasMilestone("I", 5)},
+          unlocked(){return hasMilestone("I", 5)&&!player.X.points.gte(1)},
         },
         21: {
             name: "IC3",
@@ -160,7 +174,7 @@ addLayer("I", {
             canComplete(){return player.N.points.gte("1.8e308")},
             goalDescription: "1.80e308 Numbers",
             rewardDescription(){return "Number ^1.5."},
-          unlocked(){return hasAchievement("A", 46)},
+          unlocked(){return hasAchievement("A", 46)&&!player.X.points.gte(1)},
         },
         42: {
             name: "IC ♾",
@@ -243,13 +257,55 @@ addLayer("I", {
                 player.UF.points=new Decimal(0)
                 player.NN.points=new Decimal(0)},
             },
-
-           
+            71: {
+              name: "primeeas",
+              challengeDescription(){return"Point gain is dilated ^"+formatSmall(new Decimal(0.75).pow(new Decimal(1).add(challengeCompletions("I",71))))},
+              canComplete(){return player.N.points.gte("1e12500")},
+              goalDescription: "1e12500 Numbers",
+              rewardDescription(){ 
+                 return "Multiple prime factor point gain by "+format(new Decimal(1).add(challengeCompletions("I",71)).tetrate(2))+"<br> you can complete it "+challengeCompletions("I",71)+"/5 times"
+              },
+              completionLimit(){return new Decimal(5)},
+            unlocked(){return hasMilestone("FS",3)},
+            },
+            72: {
+              name: "primeter",
+              challengeDescription(){return"Number gain ^"+formatSmall(new Decimal(0.8).pow(new Decimal(1).add(challengeCompletions("I",72))))},
+              canComplete(){return player.N.points.gte("1e7788")},
+              goalDescription: "1e7788 Numbers",
+              rewardDescription(){ 
+                 return "Multiple prime factor point gain by "+format(new Decimal(1).add(challengeCompletions("I",72)).tetrate(2.25))+"<br> you can complete it "+challengeCompletions("I",72)+"/5 times"
+              },
+              completionLimit(){return new Decimal(5)},
+            unlocked(){return hasMilestone("F",12500)},
+            },
+            81: {
+              name: "primee",
+              challengeDescription(){return"Negative Number gain ^"+formatSmall(new Decimal(0.3).pow(new Decimal(1).add(challengeCompletions("I",81))))},
+              canComplete(){return player.N.points.gte("1e80000")},
+              goalDescription: "1e80000 Numbers",
+              rewardDescription(){ 
+                 return "Multiple prime factor point gain by "+format(new Decimal(1).add(challengeCompletions("I",81)).tetrate(2.15))+"<br> you can complete it "+challengeCompletions("I",81)+"/5 times"
+              },
+              completionLimit(){return new Decimal(5)},
+            unlocked(){return hasMilestone("F",12500)},
+            },
+            82: {
+              name: "primegg",
+              challengeDescription(){return"Factor point gain ^"+formatSmall(new Decimal(0.2).pow(new Decimal(1).add(challengeCompletions("I",82))))},
+              canComplete(){return player.N.points.gte("1e314159")},
+              goalDescription: "1e300000 Numbers",
+              rewardDescription(){ 
+                 return "Multiple prime factor point gain by "+format(new Decimal(1).add(challengeCompletions("I",82)).tetrate(1.75))+"<br> you can complete it "+challengeCompletions("I",82)+"/5 times"
+              },
+              completionLimit(){return new Decimal(5)},
+            unlocked(){return hasMilestone("F",12500)},
+            },
     },
     autoPrestige(){
-        return hasMilestone('E',1e31);
+        return hasMilestone('E',1e31)||hasMilestone('Z',5);
     },resetsNothing(){
-        return hasMilestone('E',1e31) ;
+        return hasMilestone('E',1e31)||hasMilestone('Z',5) ;
     },
     tabFormat: {
         "Milestones":{
@@ -265,14 +321,14 @@ addLayer("I", {
           ]},
       
       "Normal Challenges":{
-        unlocked(){return hasMilestone('NN',4e21)&&!player.X.points.gte(1)},
+        unlocked(){return hasMilestone('NN',4e21)||hasMilestone("FS",3)},
         content:[
           "main-display",
           "blank",
         ["prestige-button",function(){return ""}],
           "blank",
           "blank",
-          ["row", [ ["challenge", 11], ["challenge", 12]]], ["row", [ ["challenge", 21], ["challenge", 22]]], ["row", [ ["challenge", 31], ["challenge", 32]]], ["row", [ ["challenge", 41],["challenge", 42]]]
+          ["row", [ ["challenge", 11], ["challenge", 12]]], ["row", [ ["challenge", 21], ["challenge", 22]]], ["row", [ ["challenge", 31], ["challenge", 32]]], ["row", [ ["challenge", 41],["challenge", 42]]], ["row", [ ["challenge", 71],["challenge", 72]]], ["row", [ ["challenge", 81],["challenge", 82]]]
        ],
       },
         
@@ -296,6 +352,7 @@ addLayer("I", {
     doReset(resettingLayer) {
         let keep = [];
         if (hasMilestone("MS", 3) && resettingLayer=="MS") keep.push("milestones")
+        if (hasMilestone("Z", 2) && resettingLayer=="Z") keep.push("milestones")
         if (resettingLayer=="E") keep.push("challenges")
         if (resettingLayer=="E") keep.push("milestones")
         if (resettingLayer=="O") keep.push("milestones")

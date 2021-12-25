@@ -3,7 +3,7 @@ let modInfo = {
 	id: "factor",
 	author: "3^3=7",
 	pointsName:"points",
-	modFiles: ["X.js", "tree.js","Number.js","NegativeNumber.js","UpgradeFactor.js","Factor.js","Infinity.js","Achievement.js","FactorShift.js","InfinityPoint.js","MathematicsSymbol.js","EternityPoints.js","Ordinal.js","Mathematician.js","Shape.js"],
+	modFiles: ["Zero.js","X.js", "tree.js","Number.js","NegativeNumber.js","UpgradeFactor.js","Factor.js","Infinity.js","Achievement.js","FactorShift.js","InfinityPoint.js","MathematicsSymbol.js","EternityPoints.js","Ordinal.js","Mathematician.js","Shape.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -392,6 +392,8 @@ function getPointGen() {
 	if (hasMilestone('I', 4)) gain = gain.times(player.UF.CP.pow(4).add(1))
 	if (hasMilestone('F', 1100)&&player.X.points.gte(1))gain = gain.times(player.F.points.pow(1.5).add(1))
 	gain = gain.pow(getPointGenExp())
+	if(inChallenge('I', 71))	gain=new Decimal(10).pow(gain.add(1).log(10).pow(new Decimal(0.75).pow(new Decimal(1).add(challengeCompletions("I",71)))))
+	if(hasMilestone('I', 300))	gain=new Decimal(10).pow(gain.add(1).log(10).pow(new Decimal(1.025)))
 	return gain
 }
 function getPointGenExp(){
@@ -414,6 +416,7 @@ else	if(hasChallenge('UF',101)&&player.X.points.gte(1)&&!inChallenge("UF",221)) 
 	if(hasUpgrade('UF',43))exp = exp.times(player.IP.points.add(1).log(10).add(1).log(10).add(1).times(player.M.points.add(1)).times(player.F.points.add(1).log(10).add(1).log(10).add(1)).times(player.MS.points.add(1).pow(0.5)).times(buyableEffect('E',11)))
 	else if(hasUpgrade('UF',42)) exp = exp.times(player.IP.points.add(1).log(10).add(1).log(10).add(1).times(player.M.points.add(1)).times(player.F.points.add(1).log(10).add(1).log(10).add(1)).times(player.MS.points.add(1).pow(0.5)).add(10).log(10))
 if(inChallenge('UF',101)) exp = exp.times(0.25)
+if (hasMilestone('Z',2)) exp = exp.times(1.05)
 	return exp
 }
 
@@ -426,27 +429,28 @@ var displayThings = [
 	function(){	
 		let s=""
 		if (isEndgame())  s+= "Congratulations, You reach the endgame.<br><h3>Don't go pass endgame because it may break the game."
-		else if (player.X.best.gte(1))  s+= "You have 0 layers left to unlock."					
-		else if (player.S.best.gte(1))  s+= "You have 1 layer left to unlock.<br> Next layer at '1.798F308' upgrade (Just a upgrade name)."
-		else if (player.M.best.gte(1)&&player.O.best.gte(1))  s+="You have 2 layers left to unlock.<br> Next layer at 1.80e308 Infinity."
-		else if (player.M.best.gte(1))  s+= "You have 3 layers left to unlock.<br> Next layer at 1.80e312 Factors."
-		else if (player.O.best.gte(1))  s+= "You have 3 layers left to unlock.<br> Next layer at 1.00e20 Eternity points."
-		else if (player.E.best.gte(1))  s+= "You have 4 layers left to unlock.<br> Next layer at 1.00e15 Eternity points."
-		else if (player.MS.best.gte(1)) s+= "You have 5 layers left to unlock. <br>Next layer at complete Boost or nerf 4."
-		else if (player.IP.best.gte(1)) s+= "You have 6 layers left to unlock.<br> Next layer at 1.00e1800 Infinity points."
-		else if (player.FS.best.gte(1)) s+= "You have 7 layers left to unlock.<br> Next layer at 1.80e308 Negative Number."
-		else if (player.NN.best.gte(1)) s+= "You have 8 layers left to unlock.<br> Next layer at 1.00e8 Factors."
-		else if (player.I.best.gte(1))  s+= "You have 9 layers left to unlock.<br> Next layer at 3 Infinity."
-		else if (player.UF.best.gte(1)) s+= "You have 10 layers left to unlock.<br> Next layer at 1.8e308 Numbers."
-		else if (player.F.points.gte(1))s+= "You have 11 layers left to unlock.<br> Next layer at 5 Factor challenge"
-		else s+=                            "You have 12 layers left to unlock.<br>Next layer at 5 Number upgrade"		   
+		else if (player.Z.best.gte(1))  s+= "You have 0 layers left to unlock."		
+		else if (player.X.best.gte(1))  s+= "You have 1 layers left to unlock.<br> Next layer at 40000 Infinity."					
+		else if (player.S.best.gte(1))  s+= "You have 2 layer left to unlock.<br> Next layer at '1.798F308' upgrade (Just a upgrade name)."
+		else if (player.M.best.gte(1)&&player.O.best.gte(1))  s+="You have 3 layers left to unlock.<br> Next layer at 1.80e308 Infinity."
+		else if (player.M.best.gte(1))  s+= "You have 4 layers left to unlock.<br> Next layer at 1.80e312 Factors."
+		else if (player.O.best.gte(1))  s+= "You have 4 layers left to unlock.<br> Next layer at 1.00e20 Eternity points."
+		else if (player.E.best.gte(1))  s+= "You have 5 layers left to unlock.<br> Next layer at 1.00e15 Eternity points."
+		else if (player.MS.best.gte(1)) s+= "You have 6 layers left to unlock. <br>Next layer at complete Boost or nerf 4."
+		else if (player.IP.best.gte(1)) s+= "You have 7 layers left to unlock.<br> Next layer at 1.00e1800 Infinity points."
+		else if (player.FS.best.gte(1)) s+= "You have 8 layers left to unlock.<br> Next layer at 1.80e308 Negative Number."
+		else if (player.NN.best.gte(1)) s+= "You have 9 layers left to unlock.<br> Next layer at 1.00e8 Factors."
+		else if (player.I.best.gte(1))  s+= "You have 10 layers left to unlock.<br> Next layer at 3 Infinity."
+		else if (player.UF.best.gte(1)) s+= "You have 11 layers left to unlock.<br> Next layer at 1.8e308 Numbers."
+		else if (player.F.points.gte(1))s+= "You have 12 layers left to unlock.<br> Next layer at 5 Factor challenge"
+		else s+=                            "You have 13 layers left to unlock.<br>Next layer at 5 Number upgrade"		   
 		return s
 	},  
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.X.best.gte(1)&&player.FS.points.gte(5)
+	return player.X.best.gte(1)&&player.Z.points.gte(6)
 }
 
 
