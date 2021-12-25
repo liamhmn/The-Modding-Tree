@@ -1178,6 +1178,7 @@ unlocked(){
 },
 
 update(diff){
+    if(hasMilestone('Z',1))player.UF.milestones=[1,6,10,11,14,16,35,52,128]
     let mp = new Decimal(0)
     let mpgain = new Decimal(buyableEffect('UF',11))
     let cost1  = new Decimal("ee20")
