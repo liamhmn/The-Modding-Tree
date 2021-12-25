@@ -505,8 +505,8 @@ rewardDescription(){return "Unlock upgrade point and you can mastered 1 more upg
 301: {  
     name: "upgrader -1",
     challengeDescription: "You trapped in Reverse and upgrader delta",
-    canComplete(){return player.N.points.gte(new Decimal("4.20e410"))},
-        goalDescription(){return format(new Decimal("4.20e410"))+ " Numbers"},
+    canComplete(){return player.N.points.gte(new Decimal("4.20e400"))},
+        goalDescription(){return format(new Decimal("4.20e400"))+ " Numbers"},
 rewardDescription(){return "Factor gain x1.13"},
   unlocked(){return player.UF.canupm1&&player.UF.page==3},
   onEnter(){
